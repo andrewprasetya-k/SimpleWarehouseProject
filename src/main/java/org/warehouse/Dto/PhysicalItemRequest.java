@@ -7,7 +7,7 @@ public class PhysicalItemRequest {
     @NotNull(message = "Item name cannot be empty")
     private String itemName;
 
-    @Positive(message = "Quantity name must be > 0")
+    @Positive(message = "Quantity must be > 0")
     private Integer quantity;
 
     @Positive(message = "Price must be > 0")
