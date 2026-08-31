@@ -1,0 +1,12 @@
+spring.datasource.url=jdbc:postgresql://<host-pooler-dari-tab-session-pooler>:5432/postgres?sslmode=require
+spring.datasource.username=postgres.<project-ref>
+spring.datasource.password=<isi-password-supabase-kamu>
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.show-sql=true
+
+spring.jackson.deserialization.fail-on-unknown-properties=true
+server.error.include-message=always
+server.error.include-binding-errors=always
