@@ -7,9 +7,11 @@ public class DigitalItemRequest {
     @NotNull(message = "Item name cannot be empty")
     private String itemName;
 
+    @NotNull(message = "Quantity cannot be empty")
     @Positive(message = "Quantity name must be > 0")
     private Integer quantity;
 
+    @NotNull(message = "Price cannot be empty")
     @Positive(message = "Price must be > 0")
     private Double price;
 
