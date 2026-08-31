@@ -4,9 +4,8 @@ public class PhysicalItemResponse {
     private Integer id;
     private String itemName;
     private Integer quantity;
-    private double price;
+    private Double price;
     private double weight;
-
 
     public PhysicalItemResponse(Integer id, String itemName, Integer quantity, Double price, double weight) {
         this.id = id;
