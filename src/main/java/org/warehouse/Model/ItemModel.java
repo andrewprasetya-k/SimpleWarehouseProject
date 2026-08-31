@@ -9,15 +9,15 @@ public abstract class ItemModel {
     @Id
     @GeneratedValue
     private Integer id;
-    private String namaItem;
+    private String itemName;
     private Integer quantity;
     private Double price;
 
     protected ItemModel() {}
 
-    public ItemModel(Integer id, String namaItem, Integer quantity, Double price) {
+    public ItemModel(Integer id, String itemName, Integer quantity, Double price) {
         this.id = id;
-        this.namaItem = namaItem;
+        this.itemName = itemName;
         this.quantity = quantity;
         this.price = price;
     }
@@ -30,12 +30,12 @@ public abstract class ItemModel {
         this.id = id;
     }
 
-    public String getNamaItem() {
-        return namaItem;
+    public String getItemName() {
+        return itemName;
     }
 
-    public void setNamaItem(String namaItem) {
-        this.namaItem = namaItem;
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
     public Integer getQuantity() {

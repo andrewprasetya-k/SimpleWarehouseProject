@@ -13,8 +13,8 @@ public class PhysicalItemModel extends ItemModel{
 
     protected PhysicalItemModel() {}
 
-    public PhysicalItemModel(Integer id, String namaItem, Integer quantity, Double price, double weight) {
-        super(id, namaItem, quantity, price);
+    public PhysicalItemModel(Integer id, String itemName, Integer quantity, Double price, double weight) {
+        super(id, itemName, quantity, price);
         this.weight = weight;
     }
 
