@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.warehouse.Dto.PhysicalItemRequest;
+import org.warehouse.Dto.PhysicalItemResponse;
 import org.warehouse.Model.DigitalItemModel;
 import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
@@ -37,8 +39,13 @@ public class ItemModelController {
 
     //post
     @PostMapping("/physical")
-    public PhysicalItemModel createPhysicalItem(@Valid @RequestBody PhysicalItemModel item){
-        return (PhysicalItemModel) service.save(item);
+    public PhysicalItemResponse createPhysicalItem(@Valid @RequestBody PhysicalItemRequest request){
+        //dto mapping
+        PhysicalItemModel entity=new PhysicalItemModel(null, request.getItemName(), request.getQuantity(), request.getPrice(), request.getWeight());
+        //untuk save ke db
+        PhysicalItemModel saved=(PhysicalItemModel) service.save(entity);
+        //mapping ke response dto untuk menjadi response
+        return new PhysicalItemResponse(saved.getId(),saved.getItemName(), saved.getQuantity(),saved.getPrice(),saved.getWeight());
     }
 
     @PostMapping("/digital")
