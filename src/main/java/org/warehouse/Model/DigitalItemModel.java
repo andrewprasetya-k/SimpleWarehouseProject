@@ -2,26 +2,28 @@ package org.warehouse.Model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 @Entity
 @Table(name="digital_item", schema="warehouse")
 public class DigitalItemModel extends ItemModel{
 
-    private boolean isLicensed;
+    @NotNull(message = "Licensed status cannot be empty")
+    private Boolean isLicensed;
 
     protected DigitalItemModel() {}
 
-    public DigitalItemModel(Integer id, String namaItem, Integer quantity, Double price, boolean isLicensed) {
+    public DigitalItemModel(Integer id, String namaItem, Integer quantity, Double price, Boolean isLicensed) {
         super(id, namaItem, quantity, price);
         this.isLicensed = isLicensed;
     }
 
-    public boolean isLisenced() {
+    public Boolean isLisenced() {
         return isLicensed;
     }
 
-    public void setLisenced(boolean lisenced) {
+    public void setLisenced(Boolean lisenced) {
         isLicensed = lisenced;
     }
 
