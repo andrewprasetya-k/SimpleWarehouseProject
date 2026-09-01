@@ -3,7 +3,6 @@ package org.warehouse.Model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
 @Entity
 @Table(name="digital_item", schema="warehouse")
@@ -23,8 +22,8 @@ public class DigitalItemModel extends ItemModel{
         return isLicensed;
     }
 
-    public void setLisenced(Boolean lisenced) {
-        isLicensed = lisenced;
+    public void setIsLicensed (Boolean licensed) {
+        isLicensed = licensed;
     }
 
     @Override
