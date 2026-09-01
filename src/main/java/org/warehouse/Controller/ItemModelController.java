@@ -43,7 +43,7 @@ public class ItemModelController {
     @PostMapping("/physical")
     public PhysicalItemResponse createPhysicalItem(@Valid @RequestBody PhysicalItemRequest request){
         //dto mapping
-        PhysicalItemModel entity=new PhysicalItemModel(null, request.getItemName(), request.getQuantity(), request.getPrice(), request.getWeight());
+        PhysicalItemModel entity=new PhysicalItemModel(null, request.itemName(), request.quantity(), request.price(), request.weight());
         //untuk save ke db
         PhysicalItemModel saved=(PhysicalItemModel) service.save(entity);
         //mapping ke response dto untuk menjadi response
@@ -53,7 +53,7 @@ public class ItemModelController {
     @PostMapping("/digital")
     public DigitalItemResponse createDigitalItem(@Valid @RequestBody DigitalItemRequest request){
         //dto mapping
-        DigitalItemModel entity=new DigitalItemModel(null, request.getItemName(), request.getQuantity(), request.getPrice(), request.getIsLicensed());
+        DigitalItemModel entity=new DigitalItemModel(null, request.itemName(), request.quantity(), request.price(), request.isLicensed());
         //untuk save ke db
         DigitalItemModel saved=(DigitalItemModel) service.save(entity);
         //mapping ke response dto untuk menjadi response

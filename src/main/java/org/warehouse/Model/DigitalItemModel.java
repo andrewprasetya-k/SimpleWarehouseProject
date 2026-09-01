@@ -11,7 +11,6 @@ public class DigitalItemModel extends ItemModel{
     @NotNull(message = "Licensed status cannot be empty")
     private Boolean isLicensed;
 
-    protected DigitalItemModel() {}
 
     public DigitalItemModel(Integer id, String namaItem, Integer quantity, Double price, Boolean isLicensed) {
         super(id, namaItem, quantity, price);
