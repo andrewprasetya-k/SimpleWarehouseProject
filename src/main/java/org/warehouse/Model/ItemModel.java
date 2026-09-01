@@ -13,6 +13,10 @@ public abstract class ItemModel {
     private Integer quantity;
     private Double price;
 
+    @ManyToOne
+    @JoinColumn(name="warehouse_id")
+    private WarehouseModel warehouse;
+
     protected ItemModel() {}
 
     public ItemModel(Integer id, String itemName, Integer quantity, Double price) {
@@ -52,6 +56,14 @@ public abstract class ItemModel {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public WarehouseModel getWarehouse() {
+        return warehouse;
+    }
+
+    public void setWarehouse(WarehouseModel warehouse) {
+        this.warehouse = warehouse;
     }
 
     public abstract double calculateTotalValue();
