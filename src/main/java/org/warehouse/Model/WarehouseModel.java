@@ -1,5 +1,6 @@
 package org.warehouse.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class WarehouseModel {
     private String address;
 
     @OneToMany(mappedBy = "warehouse")
+    @JsonIgnore
     private List<ItemModel> items;
 
     protected WarehouseModel() {}

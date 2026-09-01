@@ -31,12 +31,27 @@ public class ItemModelController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ItemModel> findOne(@PathVariable int id){
-        ItemModel item=service.findById(id);
-        if (item==null){
+    public ResponseEntity<ItemModel> findOne(@PathVariable int id) {
+        ItemModel item = service.findById(id);
+        if (item == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().body(item);
+    }
+
+    @GetMapping("/quantity/{quantity}")
+    public List<ItemModel> findByQuantityGreaterThan(@PathVariable int quantity) {
+        return service.findByQuantityGreaterThan(quantity);
+    }
+
+    @GetMapping("/warehouse/{warehouseId}")
+    public List<ItemModel> findByWarehouseId(@PathVariable Integer warehouseId) {
+        return service.findByWarehouseId(warehouseId);
+    }
+
+    @GetMapping("/physical/search")
+    public List<PhysicalItemModel> findPhysicalItemsByItemName(@RequestParam String name) {
+        return service.findPhysicalItemsByItemName(name);
     }
 
     //post

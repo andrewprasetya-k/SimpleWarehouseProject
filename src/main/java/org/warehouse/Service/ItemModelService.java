@@ -1,8 +1,8 @@
 package org.warehouse.Service;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.warehouse.Model.ItemModel;
+import org.warehouse.Model.PhysicalItemModel;
 import org.warehouse.Repository.ItemModelRepository;
 
 import java.util.List;
@@ -42,5 +42,18 @@ public class ItemModelService {
             return true;
         }
         return false;
+    }
+
+    //appended repo
+    public List<ItemModel> findByQuantityGreaterThan(int quantity) {
+        return repo.findByQuantityGreaterThan(quantity);
+    }
+
+    public List<ItemModel> findByWarehouseId(Integer warehouseId) {
+        return repo.findByWarehouseId(warehouseId);
+    }
+
+    public List<PhysicalItemModel> findPhysicalItemsByItemName(String keyword) {
+        return repo.findPhysicalItemsByItemName(keyword);
     }
 }
