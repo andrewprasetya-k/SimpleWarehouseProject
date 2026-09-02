@@ -4,10 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.warehouse.Dto.DigitalItemRequest;
-import org.warehouse.Dto.DigitalItemResponse;
-import org.warehouse.Dto.PhysicalItemRequest;
-import org.warehouse.Dto.PhysicalItemResponse;
+import org.warehouse.Dto.*;
 import org.warehouse.Model.DigitalItemModel;
 import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
@@ -45,8 +42,11 @@ public class ItemModelController {
     }
 
     @GetMapping("/warehouse/{warehouseId}")
-    public List<ItemModel> findByWarehouseId(@PathVariable Integer warehouseId) {
-        return service.findByWarehouseId(warehouseId);
+    public List<ItemSummaryResponse> findByWarehouseId(@PathVariable Integer warehouseId) {
+        return service.findByWarehouseId(warehouseId)
+                .stream()
+                .map(item -> new ItemSummaryResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity()))
+                .toList();
     }
 
     @GetMapping("/physical/search")
