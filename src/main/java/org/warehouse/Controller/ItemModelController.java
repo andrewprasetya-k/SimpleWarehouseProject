@@ -104,4 +104,10 @@ public class ItemModelController {
         return ResponseEntity.notFound().build();
     }
 
+    //bulk move
+    @PutMapping("/warehouse/move/{warehouseId}")
+    public void moveItemsToWarehouse(@PathVariable int warehouseId, @RequestBody List<Integer> itemIds){
+        service.moveItemsToWarehouse(warehouseId,itemIds);
+    }
+
 }
