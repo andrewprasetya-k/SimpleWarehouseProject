@@ -1,0 +1,115 @@
+### Variabel dasar
+@host = http://localhost:8080
+
+##########################
+### ITEMS
+##########################
+
+### Get all items
+GET {{host}}/items
+
+### Get one item by id
+GET {{host}}/items/752
+
+### Get items with quantity greater than N
+GET {{host}}/items/quantity/1
+
+### Get items by warehouse id (response tanpa field warehouse, DTO ItemSummaryResponse)
+GET {{host}}/items/warehouse/1
+
+### Search physical items by item name (partial match)
+GET {{host}}/items/physical/search?name=Kursi
+
+### Search items by exact item name (derived query, exact match)
+GET {{host}}/items/search?name=Ebook Baru
+
+### Create physical item
+POST {{host}}/items/physical
+Content-Type: application/json
+
+{
+  "itemName": "Kursi",
+  "quantity": 3,
+  "price": 75000.0,
+  "weight": 4.2
+}
+
+### Create digital item
+POST {{host}}/items/digital
+Content-Type: application/json
+
+{
+  "itemName": "Ebook Baru",
+  "quantity": 7,
+  "price": 30000.0,
+  "isLicensed": false
+}
+
+### Update physical item
+PUT {{host}}/items/physical/752
+Content-Type: application/json
+
+{
+  "itemName": "Kursi Kantor",
+  "quantity": 5,
+  "price": 80000.0,
+  "weight": 4.5
+}
+
+### Update digital item
+PUT {{host}}/items/digital/753
+Content-Type: application/json
+
+{
+  "itemName": "Ebook Revisi",
+  "quantity": 10,
+  "price": 35000.0,
+  "isLicensed": true
+}
+
+### Bulk move items to a warehouse (body: array of item id) - skenario SUKSES
+PUT {{host}}/items/warehouse/move/1
+Content-Type: application/json
+
+[752]
+
+### Bulk move items - skenario GAGAL (salah satu id invalid, buat test rollback)
+PUT {{host}}/items/warehouse/move/1
+Content-Type: application/json
+
+[752, 9999]
+
+### Delete item by id
+DELETE {{host}}/items/752
+
+
+##########################
+### WAREHOUSES
+##########################
+
+### Get all warehouses
+GET {{host}}/warehouses
+
+### Get one warehouse by id
+GET {{host}}/warehouses/1
+
+### Create warehouse
+POST {{host}}/warehouses
+Content-Type: application/json
+
+{
+  "warehouseName": "Gudang Jakarta Selatan",
+  "address": "Jl. Fatmawati No. 12"
+}
+
+### Update warehouse
+PUT {{host}}/warehouses/1
+Content-Type: application/json
+
+{
+  "warehouseName": "Gudang Jakarta Selatan (Renovasi)",
+  "address": "Jl. Fatmawati No. 20"
+}
+
+### Delete warehouse by id
+DELETE {{host}}/warehouses/1
