@@ -68,6 +68,10 @@ public class ItemService {
         return repo.findPhysicalItemsByItemName(keyword);
     }
 
+    public List<ItemModel> findByItemNameStartingWith(String itemName) {
+        return repo.findByItemNameStartingWith(itemName);
+    }
+
     //for transaction
     @Transactional
     public void moveItemsToWarehouse(Integer warehouseId, List<Integer> itemId) {
@@ -77,6 +81,7 @@ public class ItemService {
             ItemModel item=repo.findById(itm).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found " +  itm));
             item.setWarehouse(warehouse);
             this.save(item);
+            System.out.println("Moved " + itm + " to warehouse " + warehouse);
         }
 
         eventPublisher.publishEvent(new ItemsMovedEvent(warehouseId,itemId));

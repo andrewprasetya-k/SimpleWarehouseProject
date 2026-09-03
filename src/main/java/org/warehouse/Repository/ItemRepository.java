@@ -24,4 +24,6 @@ public interface ItemRepository extends JpaRepository<ItemModel, Integer> {
             "WHERE i.item_name LIKE CONCAT('%', :keyword, '%')", nativeQuery = true)
     List<PhysicalItemModel> findPhysicalItemsByItemName(String keyword);
 
+    List<ItemModel> findByItemNameStartingWith(String itemName);
+
 }

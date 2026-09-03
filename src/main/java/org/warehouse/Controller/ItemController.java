@@ -26,6 +26,11 @@ public class ItemController {
         return service.findAll();
     }
 
+    @GetMapping("/search")
+    public List<ItemModel> findByItemNameStartingWith(@RequestParam String name) {
+        return service.findByItemNameStartingWith(name);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ItemModel> findOne(@PathVariable int id) {
         ItemModel item = service.findById(id);
