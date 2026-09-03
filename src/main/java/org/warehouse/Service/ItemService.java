@@ -67,10 +67,10 @@ public class ItemService {
     //for transaction
     @Transactional
     public void moveItemsToWarehouse(Integer warehouseId, List<Integer> itemId) {
-        WarehouseModel warehouse=warehouseRepo.findById(warehouseId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Warehouse not found" + warehouseId));
+        WarehouseModel warehouse=warehouseRepo.findById(warehouseId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Warehouse not found " + warehouseId));
 
         for (Integer itm:itemId){
-            ItemModel item=repo.findById(itm).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found" +  itm));
+            ItemModel item=repo.findById(itm).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found " +  itm));
             item.setWarehouse(warehouse);
             this.save(item);
         }
