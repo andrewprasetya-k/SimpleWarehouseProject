@@ -24,13 +24,13 @@ public class ItemController {
 
     //get
     @GetMapping
-    public Page<ItemModel> findAll(Pageable pageable) {
-        return service.findAll(pageable);
+    public Page<ItemSummaryResponse> findAll(Pageable pageable) {
+        return service.findAll(pageable).map(i -> new ItemSummaryResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity()));
     }
 
     @GetMapping("/search")
-    public List<ItemModel> findByItemNameStartingWith(@RequestParam String name) {
-        return service.findByItemNameStartingWith(name);
+    public List<ItemSummaryResponse> findByItemNameStartingWith(@RequestParam String name) {
+        return service.findByItemNameStartingWith(name).stream().map(i -> new ItemSummaryResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity())).toList();
     }
 
     @GetMapping("/{id}")

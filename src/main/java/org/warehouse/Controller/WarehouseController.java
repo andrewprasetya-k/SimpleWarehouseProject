@@ -10,14 +10,12 @@ import org.warehouse.Dto.WarehouseResponse;
 import org.warehouse.Model.WarehouseModel;
 import org.warehouse.Service.WarehouseService;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/warehouses")
-public class WarehouseModelController {
+public class WarehouseController {
     private final WarehouseService service;
 
-    public WarehouseModelController(WarehouseService service) {
+    public WarehouseController(WarehouseService service) {
         this.service = service;
     }
 
