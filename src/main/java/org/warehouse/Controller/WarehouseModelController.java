@@ -1,6 +1,8 @@
 package org.warehouse.Controller;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.warehouse.Dto.WarehouseRequest;
@@ -20,10 +22,8 @@ public class WarehouseModelController {
     }
 
     @GetMapping
-    public List<WarehouseResponse> findAll() {
-        return service.findAll().stream()
-            .map(w -> new WarehouseResponse(w.getId(), w.getWarehouseName(), w.getAddress()))
-            .toList();
+    public Page<WarehouseResponse> findAll(Pageable pageable) {
+        return service.findAll(pageable).map(w -> new WarehouseResponse(w.getId(), w.getWarehouseName(), w.getAddress()));
     }
 
     @GetMapping("/{id}")

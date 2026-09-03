@@ -1,5 +1,7 @@
 package org.warehouse.Service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.warehouse.Model.WarehouseModel;
 import org.warehouse.Repository.WarehouseRepository;
@@ -14,8 +16,8 @@ public class WarehouseService {
         this.repo = repo;
     }
 
-    public List<WarehouseModel> findAll() {
-        return repo.findAll();
+    public Page<WarehouseModel> findAll(Pageable pageable) {
+        return repo.findAll(pageable);
     }
 
     public WarehouseModel findById(Integer id) {
