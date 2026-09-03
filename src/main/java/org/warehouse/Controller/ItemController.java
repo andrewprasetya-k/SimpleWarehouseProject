@@ -1,6 +1,8 @@
 package org.warehouse.Controller;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.warehouse.Dto.*;
@@ -22,8 +24,8 @@ public class ItemController {
 
     //get
     @GetMapping
-    public List<ItemModel> findAll(){
-        return service.findAll();
+    public Page<ItemModel> findAll(Pageable pageable) {
+        return service.findAll(pageable);
     }
 
     @GetMapping("/search")

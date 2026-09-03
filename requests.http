@@ -5,8 +5,17 @@
 ### ITEMS
 ##########################
 
-### Get all items
+### Get all items (paginated, default page=0&size=20)
 GET {{host}}/items
+
+### Get items with pagination (page 0, 1 item per page)
+GET {{host}}/items?page=0&size=1
+
+### Get items sorted by price descending
+GET {{host}}/items?sort=price,desc
+
+### Get items paginated + sorted together
+GET {{host}}/items?page=0&size=1&sort=price,desc
 
 ### Get one item by id
 GET {{host}}/items/752
