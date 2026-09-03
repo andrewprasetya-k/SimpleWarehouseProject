@@ -2,15 +2,15 @@ package org.warehouse.Service;
 
 import org.springframework.stereotype.Service;
 import org.warehouse.Model.WarehouseModel;
-import org.warehouse.Repository.WarehouseModelRepository;
+import org.warehouse.Repository.WarehouseRepository;
 
 import java.util.List;
 
 @Service
-public class WarehouseModelService {
-    private final WarehouseModelRepository repo;
+public class WarehouseService {
+    private final WarehouseRepository repo;
 
-    public WarehouseModelService(WarehouseModelRepository repo) {
+    public WarehouseService(WarehouseRepository repo) {
         this.repo = repo;
     }
 

@@ -6,16 +6,16 @@ import org.springframework.web.bind.annotation.*;
 import org.warehouse.Dto.WarehouseRequest;
 import org.warehouse.Dto.WarehouseResponse;
 import org.warehouse.Model.WarehouseModel;
-import org.warehouse.Service.WarehouseModelService;
+import org.warehouse.Service.WarehouseService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/warehouses")
 public class WarehouseModelController {
-    private final WarehouseModelService service;
+    private final WarehouseService service;
 
-    public WarehouseModelController(WarehouseModelService service) {
+    public WarehouseModelController(WarehouseService service) {
         this.service = service;
     }
 

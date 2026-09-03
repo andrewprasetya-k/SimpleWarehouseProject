@@ -1,23 +1,22 @@
 package org.warehouse.Controller;
 
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.warehouse.Dto.*;
 import org.warehouse.Model.DigitalItemModel;
 import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
-import org.warehouse.Service.ItemModelService;
+import org.warehouse.Service.ItemService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/items")
-public class ItemModelController {
-    private final ItemModelService service;
+public class ItemController {
+    private final ItemService service;
 
-    public ItemModelController(ItemModelService service){
+    public ItemController(ItemService service){
         this.service = service;
     }
 

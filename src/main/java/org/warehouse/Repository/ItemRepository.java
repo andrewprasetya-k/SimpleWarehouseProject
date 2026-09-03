@@ -9,7 +9,7 @@ import org.warehouse.Model.PhysicalItemModel;
 import java.util.List;
 
 @Repository
-public interface ItemModelRepository extends JpaRepository<ItemModel, Integer> {
+public interface ItemRepository extends JpaRepository<ItemModel, Integer> {
 
     //JPA
     List<ItemModel> findByQuantityGreaterThan(int quantity);

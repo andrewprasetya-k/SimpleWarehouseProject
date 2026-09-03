@@ -1,22 +1,24 @@
 package org.warehouse.Service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
 import org.warehouse.Model.WarehouseModel;
-import org.warehouse.Repository.ItemModelRepository;
-import org.warehouse.Repository.WarehouseModelRepository;
+import org.warehouse.Repository.ItemRepository;
+import org.warehouse.Repository.WarehouseRepository;
 
 import java.util.List;
 
 @Service
-public class ItemModelService {
+public class ItemService {
 
-    private final ItemModelRepository repo;
-    private final WarehouseModelRepository warehouseRepo;
+    private final ItemRepository repo;
+    private final WarehouseRepository warehouseRepo;
 
-    public ItemModelService(ItemModelRepository repo,  WarehouseModelRepository warehouseRepo) {
+    public ItemService(ItemRepository repo, WarehouseRepository warehouseRepo) {
         this.repo = repo;
         this.warehouseRepo = warehouseRepo;
     }
@@ -65,10 +67,10 @@ public class ItemModelService {
     //for transaction
     @Transactional
     public void moveItemsToWarehouse(Integer warehouseId, List<Integer> itemId) {
-        WarehouseModel warehouse=warehouseRepo.findById(warehouseId).orElseThrow(()-> new RuntimeException("Warehouse not found"));
+        WarehouseModel warehouse=warehouseRepo.findById(warehouseId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Warehouse not found" + warehouseId));
 
-        for (Integer itemId1:itemId){
-            ItemModel item=repo.findById(itemId1).orElseThrow(()-> new RuntimeException("Item not found" +  itemId1));
+        for (Integer itm:itemId){
+            ItemModel item=repo.findById(itm).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found" +  itm));
             item.setWarehouse(warehouse);
             this.save(item);
         }
