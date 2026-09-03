@@ -1,9 +1,11 @@
 package org.warehouse.Service;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import org.warehouse.Event.ItemsMovedEvent;
 import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
 import org.warehouse.Model.WarehouseModel;
@@ -17,10 +19,12 @@ public class ItemService {
 
     private final ItemRepository repo;
     private final WarehouseRepository warehouseRepo;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public ItemService(ItemRepository repo, WarehouseRepository warehouseRepo) {
+    public ItemService(ItemRepository repo, WarehouseRepository warehouseRepo,  ApplicationEventPublisher eventPublisher) {
         this.repo = repo;
         this.warehouseRepo = warehouseRepo;
+        this.eventPublisher = eventPublisher;
     }
 
     public List<ItemModel> findAll() {
@@ -74,5 +78,7 @@ public class ItemService {
             item.setWarehouse(warehouse);
             this.save(item);
         }
+
+        eventPublisher.publishEvent(new ItemsMovedEvent(warehouseId,itemId));
     }
 }
