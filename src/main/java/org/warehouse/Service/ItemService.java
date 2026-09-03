@@ -1,5 +1,6 @@
 package org.warehouse.Service;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ public class ItemService {
         return repo.findAll();
     }
 
+    @Cacheable(value="items", key="#id")
     public ItemModel findById(Integer id) {
         return repo.findById(id).orElse(null);
     }
