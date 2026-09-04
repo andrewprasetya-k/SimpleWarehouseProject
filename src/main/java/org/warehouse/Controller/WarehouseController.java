@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.warehouse.Dto.ItemDetailResponse;
+import org.warehouse.Dto.ItemResponse;
 import org.warehouse.Dto.WarehouseDetailResponse;
 import org.warehouse.Dto.WarehouseRequest;
 import org.warehouse.Dto.WarehouseResponse;
@@ -34,8 +34,8 @@ public class WarehouseController {
         if (warehouse == null) {
             return ResponseEntity.notFound().build();
         }
-        List<ItemDetailResponse> items = warehouse.getItems().stream()
-                .map(i -> new ItemDetailResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity()))
+        List<ItemResponse> items = warehouse.getItems().stream()
+                .map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity()))
                 .toList();
         return ResponseEntity.ok(new WarehouseDetailResponse(warehouse.getId(), warehouse.getWarehouseName(), warehouse.getAddress(), items));
     }

@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import org.warehouse.Dto.ItemDetailResponse;
 import org.warehouse.Dto.ItemResponse;
+import org.warehouse.Dto.ItemPagedResponse;
 import org.warehouse.Event.ItemsMovedEvent;
 import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
@@ -34,10 +34,10 @@ public class ItemService {
     }
 
     @Cacheable(value="items", key="#pageable.pageNumber + '-' + #pageable.pageSize")
-    public ItemResponse findAll(Pageable pageable) {
+    public ItemPagedResponse findAll(Pageable pageable) {
         Page<ItemModel> paged = repo.findAll(pageable);
-        List<ItemDetailResponse> content = paged.getContent().stream().map(i -> new ItemDetailResponse(i.getId(),i.getItemName(),i.getPrice(),i.getQuantity())).toList();
-        return new ItemResponse(content,paged.getNumber(),paged.getSize(), paged.getTotalElements(), paged.getTotalPages());
+        List<ItemResponse> content = paged.getContent().stream().map(i -> new ItemResponse(i.getId(),i.getItemName(),i.getPrice(),i.getQuantity())).toList();
+        return new ItemPagedResponse(content,paged.getNumber(),paged.getSize(), paged.getTotalElements(), paged.getTotalPages());
     }
 
     @Cacheable(value="items", key="#id")

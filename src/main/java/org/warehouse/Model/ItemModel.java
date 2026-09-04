@@ -13,7 +13,7 @@ public abstract class ItemModel {
     private Integer quantity;
     private Double price;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="warehouse_id")
     private WarehouseModel warehouse;
 

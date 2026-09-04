@@ -12,6 +12,7 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<ItemModel, Integer> {
 
     //JPA
+    List<ItemModel> findByItemNameStartingWith(String itemName);
     List<ItemModel> findByQuantityGreaterThan(int quantity);
 
     //JPQL
@@ -23,7 +24,4 @@ public interface ItemRepository extends JpaRepository<ItemModel, Integer> {
             "JOIN warehouse.physical_item p ON i.id = p.id " +
             "WHERE i.item_name LIKE CONCAT('%', :keyword, '%')", nativeQuery = true)
     List<PhysicalItemModel> findPhysicalItemsByItemName(String keyword);
-
-    List<ItemModel> findByItemNameStartingWith(String itemName);
-
 }

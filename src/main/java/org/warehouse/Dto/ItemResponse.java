@@ -1,12 +1,9 @@
 package org.warehouse.Dto;
 
-import java.util.List;
-
-public record ItemResponse (
-        List<ItemDetailResponse> content,
-        int pageNumber,
-        int pageSize,
-        long totalElements,
-        int totalPages
-){
+public record ItemResponse(
+    Integer id,
+    String itemName,
+    Double price,
+    Integer quantity
+) {
 }

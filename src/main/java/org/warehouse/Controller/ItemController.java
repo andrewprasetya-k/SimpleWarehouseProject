@@ -10,6 +10,7 @@ import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
 import org.warehouse.Service.ItemService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,13 +24,13 @@ public class ItemController {
 
     //get
     @GetMapping
-    public ItemResponse findAll(Pageable pageable) {
+    public ItemPagedResponse findAll(Pageable pageable) {
         return service.findAll(pageable);
     }
 
     @GetMapping("/search")
-    public List<ItemDetailResponse> findByItemNameStartingWith(@RequestParam String name) {
-        return service.findByItemNameStartingWith(name).stream().map(i -> new ItemDetailResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity())).toList();
+    public List<ItemResponse> findByItemNameStartingWith(@RequestParam String name) {
+        return service.findByItemNameStartingWith(name).stream().map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity())).toList();
     }
 
     @GetMapping("/{id}")
@@ -42,15 +43,20 @@ public class ItemController {
     }
 
     @GetMapping("/quantity/{quantity}")
-    public List<ItemModel> findByQuantityGreaterThan(@PathVariable int quantity) {
-        return service.findByQuantityGreaterThan(quantity);
+    public List<ItemResponse> findByQuantityGreaterThan(@PathVariable int quantity) {
+        List<ItemModel> items = service.findByQuantityGreaterThan(quantity);
+        List<ItemResponse> response = new ArrayList<>();
+        for (ItemModel item : items) {
+            response.add(new ItemResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity()));
+        }
+        return response;
     }
 
     @GetMapping("/warehouse/{warehouseId}")
-    public List<ItemDetailResponse> findByWarehouseId(@PathVariable Integer warehouseId) {
+    public List<ItemResponse> findByWarehouseId(@PathVariable Integer warehouseId) {
         return service.findByWarehouseId(warehouseId)
                 .stream()
-                .map(item -> new ItemDetailResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity()))
+                .map(item -> new ItemResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity()))
                 .toList();
     }
 
