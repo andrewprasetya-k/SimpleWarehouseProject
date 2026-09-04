@@ -1,6 +1,6 @@
 package org.warehouse.Dto;
 
-public record ItemSummaryResponse(
+public record ItemResponse(
     Integer id,
     String itemName,
     Double price,

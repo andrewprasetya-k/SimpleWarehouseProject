@@ -5,10 +5,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.warehouse.Dto.ItemResponse;
+import org.warehouse.Dto.WarehouseDetailResponse;
 import org.warehouse.Dto.WarehouseRequest;
 import org.warehouse.Dto.WarehouseResponse;
 import org.warehouse.Model.WarehouseModel;
 import org.warehouse.Service.WarehouseService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/warehouses")
@@ -25,12 +29,15 @@ public class WarehouseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WarehouseResponse> findOne(@PathVariable int id) {
+    public ResponseEntity<WarehouseDetailResponse> findOne(@PathVariable int id) {
         WarehouseModel warehouse = service.findById(id);
         if (warehouse == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(new WarehouseResponse(warehouse.getId(), warehouse.getWarehouseName(), warehouse.getAddress()));
+        List<ItemResponse> items = warehouse.getItems().stream()
+                .map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity()))
+                .toList();
+        return ResponseEntity.ok(new WarehouseDetailResponse(warehouse.getId(), warehouse.getWarehouseName(), warehouse.getAddress(), items));
     }
 
     @PostMapping

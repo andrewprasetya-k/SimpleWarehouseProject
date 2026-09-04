@@ -24,13 +24,13 @@ public class ItemController {
 
     //get
     @GetMapping
-    public Page<ItemSummaryResponse> findAll(Pageable pageable) {
-        return service.findAll(pageable).map(i -> new ItemSummaryResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity()));
+    public Page<ItemResponse> findAll(Pageable pageable) {
+        return service.findAll(pageable).map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity()));
     }
 
     @GetMapping("/search")
-    public List<ItemSummaryResponse> findByItemNameStartingWith(@RequestParam String name) {
-        return service.findByItemNameStartingWith(name).stream().map(i -> new ItemSummaryResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity())).toList();
+    public List<ItemResponse> findByItemNameStartingWith(@RequestParam String name) {
+        return service.findByItemNameStartingWith(name).stream().map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity())).toList();
     }
 
     @GetMapping("/{id}")
@@ -48,10 +48,10 @@ public class ItemController {
     }
 
     @GetMapping("/warehouse/{warehouseId}")
-    public List<ItemSummaryResponse> findByWarehouseId(@PathVariable Integer warehouseId) {
+    public List<ItemResponse> findByWarehouseId(@PathVariable Integer warehouseId) {
         return service.findByWarehouseId(warehouseId)
                 .stream()
-                .map(item -> new ItemSummaryResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity()))
+                .map(item -> new ItemResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity()))
                 .toList();
     }
 
