@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import org.warehouse.Dto.ItemDetailResponse;
+import org.warehouse.Dto.ItemResponse;
 import org.warehouse.Event.ItemsMovedEvent;
 import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
@@ -15,6 +17,7 @@ import org.warehouse.Model.WarehouseModel;
 import org.warehouse.Repository.ItemRepository;
 import org.warehouse.Repository.WarehouseRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,8 +33,11 @@ public class ItemService {
         this.eventPublisher = eventPublisher;
     }
 
-    public Page<ItemModel> findAll(Pageable pageable) {
-        return repo.findAll(pageable);
+    @Cacheable(value="items", key="#pageable.pageNumber + '-' + #pageable.pageSize")
+    public ItemResponse findAll(Pageable pageable) {
+        Page<ItemModel> paged = repo.findAll(pageable);
+        List<ItemDetailResponse> content = paged.getContent().stream().map(i -> new ItemDetailResponse(i.getId(),i.getItemName(),i.getPrice(),i.getQuantity())).toList();
+        return new ItemResponse(content,paged.getNumber(),paged.getSize(), paged.getTotalElements(), paged.getTotalPages());
     }
 
     @Cacheable(value="items", key="#id")

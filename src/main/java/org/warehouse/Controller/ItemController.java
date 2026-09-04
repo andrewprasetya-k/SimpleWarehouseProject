@@ -1,7 +1,6 @@
 package org.warehouse.Controller;
 
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +23,13 @@ public class ItemController {
 
     //get
     @GetMapping
-    public Page<ItemResponse> findAll(Pageable pageable) {
-        return service.findAll(pageable).map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity()));
+    public ItemResponse findAll(Pageable pageable) {
+        return service.findAll(pageable);
     }
 
     @GetMapping("/search")
-    public List<ItemResponse> findByItemNameStartingWith(@RequestParam String name) {
-        return service.findByItemNameStartingWith(name).stream().map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity())).toList();
+    public List<ItemDetailResponse> findByItemNameStartingWith(@RequestParam String name) {
+        return service.findByItemNameStartingWith(name).stream().map(i -> new ItemDetailResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity())).toList();
     }
 
     @GetMapping("/{id}")
@@ -48,10 +47,10 @@ public class ItemController {
     }
 
     @GetMapping("/warehouse/{warehouseId}")
-    public List<ItemResponse> findByWarehouseId(@PathVariable Integer warehouseId) {
+    public List<ItemDetailResponse> findByWarehouseId(@PathVariable Integer warehouseId) {
         return service.findByWarehouseId(warehouseId)
                 .stream()
-                .map(item -> new ItemResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity()))
+                .map(item -> new ItemDetailResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity()))
                 .toList();
     }
 

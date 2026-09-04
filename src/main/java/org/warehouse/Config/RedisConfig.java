@@ -12,7 +12,7 @@ import java.time.Duration;
 public class RedisConfig {
     @Bean
     public RedisCacheConfiguration cacheConfiguration() {
-        return RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(5)).serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
+        return RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(1)).serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
                 new GenericJackson2JsonRedisSerializer()
         ));
     }
