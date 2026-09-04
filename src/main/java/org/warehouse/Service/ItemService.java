@@ -88,11 +88,30 @@ public class ItemService {
         WarehouseModel warehouse=warehouseRepo.findById(warehouseId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Warehouse not found " + warehouseId));
         eventPublisher.publishEvent(new ItemsMovedEvent(warehouseId,itemId));
 
-        for (Integer itm:itemId){
-            ItemModel item=repo.findById(itm).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found " +  itm));
+        List<ItemModel> items = repo.findAllById(itemId);
+        System.out.println("ITEMS: " + items.stream()
+                .map(ItemModel::getItemName)
+                .toList());
+
+        //checking if user requests no existing id
+        if (items.size() != itemId.size()) {
+            List<Integer> foundIds = new ArrayList<>();
+            for (ItemModel item : items) {
+                foundIds.add(item.getId());
+            }
+            List<Integer> missingIds = new ArrayList<>();
+            for (Integer id : itemId) {
+                if (!foundIds.contains(id)) {
+                    missingIds.add(id);
+                }
+            }
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found " + missingIds);
+        }
+
+        for (ItemModel item : items){
             item.setWarehouse(warehouse);
             this.save(item);
-            System.out.println("Moved " + itm + " to warehouse " + warehouse);
+            System.out.println("Moved " + item.getId() + " to warehouse " + warehouse);
         }
     }
 }
