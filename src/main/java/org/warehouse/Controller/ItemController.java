@@ -34,8 +34,8 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ItemResponse> findOne(@PathVariable int id) {
-        ItemResponse item = service.findById(id);
+    public ResponseEntity<ItemDetailResponse> findOne(@PathVariable int id) {
+        ItemDetailResponse item = service.findById(id);
         if (item == null) {
             return ResponseEntity.notFound().build();
         }

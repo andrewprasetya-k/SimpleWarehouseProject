@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.warehouse.Dto.ItemResponse;
+import org.warehouse.Dto.ItemDetailResponse;
 import org.warehouse.Dto.ItemPagedResponse;
+import org.warehouse.Dto.WarehouseResponse;
 import org.warehouse.Event.ItemsMovedEvent;
 import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
@@ -41,12 +43,17 @@ public class ItemService {
     }
 
     @Cacheable(value="items", key="#id")
-    public ItemResponse findById(Integer id) {
+    public ItemDetailResponse findById(Integer id) {
         ItemModel item = repo.findById(id).orElse(null);
         if (item == null) {
             return null;
         }
-        return new ItemResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity());
+        WarehouseResponse warehouse = null;
+        WarehouseModel itemWarehouse = item.getWarehouse();
+        if (itemWarehouse != null) {
+            warehouse = new WarehouseResponse(itemWarehouse.getId(), itemWarehouse.getWarehouseName(), itemWarehouse.getAddress());
+        }
+        return new ItemDetailResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity(), warehouse);
     }
 
     public ItemModel save(ItemModel itemModel) {
