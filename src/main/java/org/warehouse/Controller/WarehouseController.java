@@ -5,10 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.warehouse.Dto.ItemResponse;
-import org.warehouse.Dto.WarehouseDetailResponse;
-import org.warehouse.Dto.WarehouseRequest;
-import org.warehouse.Dto.WarehouseResponse;
+import org.warehouse.Dto.*;
 import org.warehouse.Model.WarehouseModel;
 import org.warehouse.Service.WarehouseService;
 
@@ -24,8 +21,8 @@ public class WarehouseController {
     }
 
     @GetMapping
-    public Page<WarehouseResponse> findAll(Pageable pageable) {
-        return service.findAll(pageable).map(w -> new WarehouseResponse(w.getId(), w.getWarehouseName(), w.getAddress()));
+    public WarehousePagedResponse findAll(Pageable pageable) {
+        return service.findAll(pageable);
     }
 
     @GetMapping("/{id}")
