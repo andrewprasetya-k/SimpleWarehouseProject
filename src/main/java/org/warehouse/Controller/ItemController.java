@@ -34,12 +34,12 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ItemModel> findOne(@PathVariable int id) {
-        ItemModel item = service.findById(id);
+    public ResponseEntity<ItemResponse> findOne(@PathVariable int id) {
+        ItemResponse item = service.findById(id);
         if (item == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().body(item);
+        return ResponseEntity.ok(item);
     }
 
     @GetMapping("/quantity/{quantity}")

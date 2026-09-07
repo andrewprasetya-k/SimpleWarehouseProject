@@ -41,8 +41,12 @@ public class ItemService {
     }
 
     @Cacheable(value="items", key="#id")
-    public ItemModel findById(Integer id) {
-        return repo.findById(id).orElse(null);
+    public ItemResponse findById(Integer id) {
+        ItemModel item = repo.findById(id).orElse(null);
+        if (item == null) {
+            return null;
+        }
+        return new ItemResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity());
     }
 
     public ItemModel save(ItemModel itemModel) {
