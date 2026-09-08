@@ -41,3 +41,4 @@ build/
 ### Local secrets ###
 src/main/resources/application.properties
 src/main/todo.md
+TODO.md
