@@ -28,8 +28,7 @@ public class ItemsMovedKafkaProducer {
         ItemsMovedKafkaMessage message = new ItemsMovedKafkaMessage(
                 warehouseId,
                 itemIds,
-                status,
-                java.time.Instant.now()
+                status
         );
 
         System.out.println("KAFKA_ITEMS_MOVED_PRODUCE payload=" + message);
