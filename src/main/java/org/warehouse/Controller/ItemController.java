@@ -106,15 +106,15 @@ public class ItemController {
     }
 
     @PutMapping("/add-quantity/{id}")
-    public ResponseEntity<ItemModel> addQuantity(@PathVariable int id, @RequestParam int quantity){
+    public ResponseEntity<ItemResponse> addQuantity(@PathVariable int id, @RequestParam int quantity){
         ItemModel item=service.addQuantity(id, quantity);
-        return ResponseEntity.ok((ItemModel) item);
+        return ResponseEntity.ok(new ItemResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity()));
     }
 
     @PutMapping("/decrease-quantity/{id}")
-    public ResponseEntity<ItemModel> decreaseQuantity(@PathVariable int id, @RequestParam int quantity){
+    public ResponseEntity<ItemResponse> decreaseQuantity(@PathVariable int id, @RequestParam int quantity){
         ItemModel item=service.decreaseQuantity(id, quantity);
-        return ResponseEntity.ok((ItemModel) item);
+        return ResponseEntity.ok(new ItemResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity()));
     }
 
     //delete
