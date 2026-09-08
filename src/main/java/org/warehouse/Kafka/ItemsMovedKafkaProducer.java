@@ -32,6 +32,8 @@ public class ItemsMovedKafkaProducer {
                 java.time.Instant.now()
         );
 
+        System.out.println("KAFKA_ITEMS_MOVED_PRODUCE payload=" + message);
+
         CompletableFuture<?> sendResult = kafkaTemplate.send(topicName, warehouseId.toString(), message);
         sendResult.whenComplete((result, error) -> {
             if (error != null) {
@@ -39,7 +41,7 @@ public class ItemsMovedKafkaProducer {
                 return;
             }
 
-            log.info("KAFKA_ITEMS_MOVED_SENT warehouseId={} itemIds={} status={}", warehouseId, itemIds, status);
+            System.out.println("KAFKA_ITEMS_MOVED_SENT warehouseId=" + warehouseId + " itemIds=" + itemIds + " status=" + status);
         });
     }
 }

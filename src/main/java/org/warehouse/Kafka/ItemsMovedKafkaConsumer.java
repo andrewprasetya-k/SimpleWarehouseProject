@@ -14,10 +14,10 @@ public class ItemsMovedKafkaConsumer {
             groupId = "${spring.kafka.consumer.group-id}"
     )
     public void onMessage(ItemsMovedKafkaMessage message) {
-        log.info("KAFKA_ITEMS_MOVED_RECEIVED warehouseId={} itemIds={} status={} occurredAt={}",
-                message.warehouseId(),
-                message.itemIds(),
-                message.status(),
-                message.occurredAt());
+        System.out.println("KAFKA_ITEMS_MOVED_CONSUME payload=" + message);
+        System.out.println("KAFKA_ITEMS_MOVED_RECEIVED warehouseId=" + message.warehouseId()
+                + " itemIds=" + message.itemIds()
+                + " status=" + message.status()
+                + " occurredAt=" + message.occurredAt());
     }
 }
