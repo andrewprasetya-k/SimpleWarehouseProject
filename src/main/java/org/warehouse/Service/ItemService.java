@@ -20,7 +20,10 @@ import org.warehouse.Repository.ItemRepository;
 import org.warehouse.Repository.WarehouseRepository;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
@@ -93,36 +96,61 @@ public class ItemService {
         return repo.findByItemNameStartingWith(itemName);
     }
 
-    //for transaction
     @Transactional
-    public void moveItemsToWarehouse(Integer warehouseId, List<Integer> itemId) {
-        WarehouseModel warehouse=warehouseRepo.findById(warehouseId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Warehouse not found " + warehouseId));
-        eventPublisher.publishEvent(new ItemsMovedEvent(warehouseId,itemId));
+    public void moveItemsToWarehouse(Integer warehouseId, List<Integer> itemIds) {
+        eventPublisher.publishEvent(
+                new ItemsMovedEvent(warehouseId, itemIds)
+        );
+        WarehouseModel warehouse = warehouseRepo.findById(warehouseId)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Warehouse not found " + warehouseId
+                        )
+                );
 
-        List<ItemModel> items = repo.findAllById(itemId);
-        System.out.println("ITEMS: " + items.stream()
-                .map(ItemModel::getItemName)
-                .toList());
+        List<ItemModel> items = repo.findAllById(itemIds);
 
-        //checking if user requests no existing id
-        if (items.size() != itemId.size()) {
-            List<Integer> foundIds = new ArrayList<>();
-            for (ItemModel item : items) {
-                foundIds.add(item.getId());
-            }
-            List<Integer> missingIds = new ArrayList<>();
-            for (Integer id : itemId) {
-                if (!foundIds.contains(id)) {
-                    missingIds.add(id);
-                }
-            }
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found " + missingIds);
+        // cek missing id
+        Set<Integer> foundIds = items.stream()
+                .map(ItemModel::getId)
+                .collect(Collectors.toSet());
+
+        List<Integer> missingIds = itemIds.stream()
+                .filter(id -> !foundIds.contains(id))
+                .distinct()
+                .toList();
+
+        if (!missingIds.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Item not found " + missingIds
+            );
         }
 
-        for (ItemModel item : items){
-            item.setWarehouse(warehouse);
-            this.save(item);
-            System.out.println("Moved " + item.getId() + " to warehouse " + warehouse);
+        // cek item sudah di warehouse
+        Set<Integer> existingIds = repo.findByWarehouseId(warehouseId).stream()
+                .map(ItemModel::getId)
+                .collect(Collectors.toSet());
+
+        List<Integer> overlappingIds = itemIds.stream()
+                .filter(existingIds::contains)
+                .distinct()
+                .toList();
+
+        if (!overlappingIds.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Item already in warehouse " + warehouseId + ": " + overlappingIds
+            );
         }
+
+        // Move items
+        items.forEach(item -> item.setWarehouse(warehouse));
+
+        repo.saveAll(items);
+
+
     }
+
 }
