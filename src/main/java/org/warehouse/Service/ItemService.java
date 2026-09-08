@@ -102,7 +102,7 @@ public class ItemService {
     @Transactional
     @CacheEvict(value = "items", allEntries = true)
     public ItemModel addQuantity(Integer id, Integer quantity) {
-        if (quantity == null || quantity <= 0) {
+        if (quantity == null || quantity <= 0 || quantity > 100) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantity must be greater than 0");
         }
         ItemModel item = repo.findByIdForUpdate(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found " + id));
@@ -114,7 +114,7 @@ public class ItemService {
     @Transactional
     @CacheEvict(value = "items", allEntries = true)
     public ItemModel decreaseQuantity(Integer id, Integer quantity) {
-        if (quantity == null || quantity <= 0) {
+        if (quantity == null || quantity <= 0 || quantity > 100) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantity must be greater than 0");
         }
         ItemModel item = repo.findByIdForUpdate(id).orElseThrow(() ->
