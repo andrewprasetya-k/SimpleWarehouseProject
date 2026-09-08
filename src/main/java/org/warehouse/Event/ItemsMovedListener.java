@@ -17,6 +17,7 @@ public class ItemsMovedListener {
         //tempat untuk tambahkan push notification/email, dll
     }
 
+    //kayaknya ini baru
     @TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
     public void onAfterRollback(ItemsMovedEvent event) {
         System.out.println("Failed to moved "+ event.itemsId()+" to warehouse "+event.warehouseId());
