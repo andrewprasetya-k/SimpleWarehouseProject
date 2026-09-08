@@ -6,7 +6,11 @@ import org.springframework.stereotype.Repository;
 import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
 
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.Lock;
+
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ItemRepository extends JpaRepository<ItemModel, Integer> {
@@ -18,6 +22,10 @@ public interface ItemRepository extends JpaRepository<ItemModel, Integer> {
     //JPQL
     @Query("select i from ItemModel i where i.warehouse.id=:warehouseId")
     List<ItemModel> findByWarehouseId(Integer warehouseId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select i from ItemModel i where i.id = :id")
+    Optional<ItemModel> findByIdForUpdate(Integer id);
 
     //native sql
     @Query(value = "SELECT i.*, p.weight FROM warehouse.item i " +

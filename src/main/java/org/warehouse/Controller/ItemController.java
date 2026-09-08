@@ -105,6 +105,18 @@ public class ItemController {
         return ResponseEntity.ok((DigitalItemModel) updated);
     }
 
+    @PutMapping("/add-quantity/{id}")
+    public ResponseEntity<ItemModel> addQuantity(@PathVariable int id, @RequestParam int quantity){
+        ItemModel item=service.addQuantity(id, quantity);
+        return ResponseEntity.ok((ItemModel) item);
+    }
+
+    @PutMapping("/decrease-quantity/{id}")
+    public ResponseEntity<ItemModel> decreaseQuantity(@PathVariable int id, @RequestParam int quantity){
+        ItemModel item=service.decreaseQuantity(id, quantity);
+        return ResponseEntity.ok((ItemModel) item);
+    }
+
     //delete
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deletePhysicalItem(@PathVariable int id){

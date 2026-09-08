@@ -1,6 +1,7 @@
 package org.warehouse.Service;
 
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +21,6 @@ import org.warehouse.Repository.ItemRepository;
 import org.warehouse.Repository.WarehouseRepository;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -59,10 +59,12 @@ public class ItemService {
         return new ItemDetailResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity(), warehouse);
     }
 
+    @CacheEvict(value = "items", allEntries = true)
     public ItemModel save(ItemModel itemModel) {
         return repo.save(itemModel);
     }
 
+    @CacheEvict(value = "items", allEntries = true)
     public ItemModel update(Integer id, ItemModel itemModel) {
         if(!repo.existsById(id)){
             return null;
@@ -71,6 +73,7 @@ public class ItemService {
         return repo.save(itemModel);
     }
 
+    @CacheEvict(value = "items", allEntries = true)
     public boolean delete(Integer id) {
         if(repo.existsById(id)){
             repo.deleteById(id);
@@ -97,10 +100,40 @@ public class ItemService {
     }
 
     @Transactional
+    @CacheEvict(value = "items", allEntries = true)
+    public ItemModel addQuantity(Integer id, Integer quantity) {
+        if (quantity == null || quantity <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantity must be greater than 0");
+        }
+        ItemModel item = repo.findByIdForUpdate(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found " + id));
+        item.setQuantity(item.getQuantity() + quantity);
+
+        return repo.save(item);
+    }
+
+    @Transactional
+    @CacheEvict(value = "items", allEntries = true)
+    public ItemModel decreaseQuantity(Integer id, Integer quantity) {
+        if (quantity == null || quantity <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantity must be greater than 0");
+        }
+        ItemModel item = repo.findByIdForUpdate(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found " + id));
+        if (item.getQuantity() - quantity < 0 ) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Insufficient stock for item " + id);
+        }
+        item.setQuantity(item.getQuantity() - quantity);
+
+        return repo.save(item);
+    }
+
+    @Transactional
+    @CacheEvict(value = "items", allEntries = true)
     public void moveItemsToWarehouse(Integer warehouseId, List<Integer> itemIds) {
         eventPublisher.publishEvent(
                 new ItemsMovedEvent(warehouseId, itemIds)
         );
+
         WarehouseModel warehouse = warehouseRepo.findById(warehouseId)
                 .orElseThrow(() ->
                         new ResponseStatusException(
