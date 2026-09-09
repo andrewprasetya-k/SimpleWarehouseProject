@@ -1,6 +1,7 @@
 package org.warehouse.Kafka;
 
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.common.config.TopicConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ public class KafkaTopicConfig {
         return TopicBuilder.name(topicName)
                 .partitions(1)
                 .replicas(1)
+                .config(TopicConfig.RETENTION_MS_CONFIG, "86400000") //retention time
                 .build();
     }
 }
