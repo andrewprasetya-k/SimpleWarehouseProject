@@ -15,7 +15,7 @@ public class KafkaTopicConfig {
         return TopicBuilder.name(topicName)
                 .partitions(1)
                 .replicas(1)
-                .config(TopicConfig.RETENTION_MS_CONFIG, "86400000") //retention time
+                .config(TopicConfig.RETENTION_MS_CONFIG, "3600000") //retention time
                 .build();
     }
 }
