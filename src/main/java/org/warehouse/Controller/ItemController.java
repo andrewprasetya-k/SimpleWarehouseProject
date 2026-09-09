@@ -5,10 +5,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.warehouse.Dto.*;
+import org.warehouse.Kafka.ItemsMovedKafkaMessage;
 import org.warehouse.Model.DigitalItemModel;
 import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
 import org.warehouse.Service.ItemService;
+import org.warehouse.Kafka.ItemHistoryService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +19,11 @@ import java.util.List;
 @RequestMapping("/items")
 public class ItemController {
     private final ItemService service;
+    private final ItemHistoryService itemHistoryService;
 
-    public ItemController(ItemService service){
+    public ItemController(ItemService service,  ItemHistoryService itemHistoryService) {
         this.service = service;
+        this.itemHistoryService = itemHistoryService;
     }
 
     //get
@@ -63,6 +67,11 @@ public class ItemController {
     @GetMapping("/physical/search")
     public List<PhysicalItemModel> findPhysicalItemsByItemName(@RequestParam String name) {
         return service.findPhysicalItemsByItemName(name);
+    }
+
+    @GetMapping("/warehouse/history/{warehouseId}")
+    public List<ItemsMovedKafkaMessage> getMoveHistory(@PathVariable Integer warehouseId) {
+        return itemHistoryService.getMoveItemHistoryByWarehouseId(warehouseId);
     }
 
     //post

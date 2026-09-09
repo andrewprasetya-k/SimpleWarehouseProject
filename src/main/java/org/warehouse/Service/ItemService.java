@@ -20,7 +20,6 @@ import org.warehouse.Model.WarehouseModel;
 import org.warehouse.Repository.ItemRepository;
 import org.warehouse.Repository.WarehouseRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -182,8 +181,6 @@ public class ItemService {
         items.forEach(item -> item.setWarehouse(warehouse));
 
         repo.saveAll(items);
-
-
     }
 
 }
