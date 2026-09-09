@@ -69,9 +69,13 @@ public class ItemController {
         return service.findPhysicalItemsByItemName(name);
     }
 
+    //kafka endpoint
     @GetMapping("/warehouse/history/{warehouseId}")
-    public List<ItemsMovedKafkaMessage> getMoveHistory(@PathVariable Integer warehouseId) {
-        return itemHistoryService.getMoveItemHistoryByWarehouseId(warehouseId);
+    public ItemMoveHistoryPagedResponse<ItemsMovedKafkaMessage> getMoveHistory(
+            @PathVariable int warehouseId,
+            Pageable pageable
+    ) {
+        return itemHistoryService.getMoveItemHistoryByWarehouseId(warehouseId, pageable);
     }
 
     //post
