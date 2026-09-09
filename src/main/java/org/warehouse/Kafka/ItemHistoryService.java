@@ -44,36 +44,45 @@ public class ItemHistoryService {
                 }
             }
 
-            if (!partitions.isEmpty()) {
-                // assign dan seek ke offset paling awal untuk semua partisi
-                consumer.assign(partitions);
-                consumer.seekToBeginning(partitions);
+            if (partitions.isEmpty()) {
+                Page<ItemsMovedKafkaMessage> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
+                return new ItemMoveHistoryPagedResponse<>(
+                        emptyPage.getContent(),
+                        emptyPage.getNumber(),
+                        emptyPage.getSize(),
+                        emptyPage.getTotalElements(),
+                        emptyPage.getTotalPages()
+                );
+            }
 
-                // perulangan (looping) sampai data di Kafka benar-benar habis
-                boolean keepPolling = true;
-                int emptyPollCount = 0; // untuk cek jika Kafka sudah tidak punya data lagi
+            // assign dan seek ke offset paling awal untuk semua partisi
+            consumer.assign(partitions);
+            consumer.seekToBeginning(partitions);
 
-                while (keepPolling) {
-                    ConsumerRecords<String, ItemsMovedKafkaMessage> records = consumer.poll(Duration.ofMillis(500));
+            // perulangan (looping) sampai data di Kafka benar-benar habis
+            boolean keepPolling = true;
+            int emptyPollCount = 0; // untuk cek jika Kafka sudah tidak punya data lagi
 
-                    if (records.isEmpty()) {
-                        emptyPollCount++;
-                        // jika 2 kali poll berturut-turut kosong, artinya data sudah habis difetch
-                        if (emptyPollCount >= 2) {
-                            keepPolling = false;
-                        }
-                        continue;
+            while (keepPolling) {
+                ConsumerRecords<String, ItemsMovedKafkaMessage> records = consumer.poll(Duration.ofMillis(500));
+
+                if (records.isEmpty()) {
+                    emptyPollCount++;
+                    // jika 2 kali poll berturut-turut kosong, artinya data sudah habis difetch
+                    if (emptyPollCount >= 2) {
+                        keepPolling = false;
                     }
+                    continue;
+                }
 
-                    // reset hitungan jika di poll ini kita masih dapat data
-                    emptyPollCount = 0;
+                // reset hitungan jika di poll ini kita masih dapat data
+                emptyPollCount = 0;
 
-                    // filter message sesuai warehouseId
-                    for (ConsumerRecord<String, ItemsMovedKafkaMessage> record : records) {
-                        ItemsMovedKafkaMessage msg = record.value();
-                        if (msg != null && msg.warehouseId() != null && msg.warehouseId() == warehouseId) {
-                            allFilteredMessages.add(msg);
-                        }
+                // filter message sesuai warehouseId
+                for (ConsumerRecord<String, ItemsMovedKafkaMessage> record : records) {
+                    ItemsMovedKafkaMessage msg = record.value();
+                    if (msg != null && msg.warehouseId() != null && msg.warehouseId() == warehouseId) {
+                        allFilteredMessages.add(msg);
                     }
                 }
             }
