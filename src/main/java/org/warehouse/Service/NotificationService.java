@@ -7,10 +7,6 @@ import org.warehouse.Kafka.ItemsMovedKafkaMessage;
 public class NotificationService {
 
     public void notifyItemsMoved(ItemsMovedKafkaMessage message) {
-        System.out.println(
-                "NOTIFICATION_ITEMS_MOVED warehouseId=" + message.warehouseId()
-                        + " itemIds=" + message.itemIds()
-                        + " status=" + message.status()
-        );
+        System.out.println("NOTIFICATION_ITEMS_MOVED itemId " + message.itemIds() + " has been moved to warehouse "+message.warehouseId());
     }
 }
