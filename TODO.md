@@ -6,4 +6,3 @@ Kafka:
 1. topic: tempat message dikirim per consumer, misal dari app picker kemarin dibagi satu lantai - satu topic 
 2. partition: pembagian topic menjadi lebih kecil, misal dari app picker kemarin satu lantai (satu topic) dibagi jadi beberapa partition per bin
 3. groupId: grup consumer yang akan menerima data dari topic
-
