@@ -1,9 +1,10 @@
-package org.warehouse.Kafka;
+package org.warehouse.Kafka.Listener;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.warehouse.Event.ItemsMovedEvent;
+import org.warehouse.Kafka.Producer.ItemsMovedKafkaProducer;
 
 @Component
 public class ItemsMovedKafkaBridgeListener {

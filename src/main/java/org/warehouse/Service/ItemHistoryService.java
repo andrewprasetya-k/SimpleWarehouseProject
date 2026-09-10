@@ -1,4 +1,4 @@
-package org.warehouse.Kafka;
+package org.warehouse.Service;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

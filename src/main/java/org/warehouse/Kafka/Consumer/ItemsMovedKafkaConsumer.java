@@ -1,4 +1,4 @@
-package org.warehouse.Kafka;
+package org.warehouse.Kafka.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

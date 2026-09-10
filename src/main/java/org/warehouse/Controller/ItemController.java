@@ -10,7 +10,7 @@ import org.warehouse.Model.DigitalItemModel;
 import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
 import org.warehouse.Service.ItemService;
-import org.warehouse.Kafka.ItemHistoryService;
+import org.warehouse.Service.ItemHistoryService;
 
 import java.util.ArrayList;
 import java.util.List;
