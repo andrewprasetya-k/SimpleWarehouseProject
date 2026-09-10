@@ -12,7 +12,7 @@ public class LowStockKafkaConsumer {
 
     @KafkaListener(
             topics = "${app.kafka.topics.low-stock-alerts}",
-            groupId = "${spring.kafka.consumer.group-id}"
+            groupId = "warehouse-low-stock-group"
     )
     public void onMessage(LowStockKafkaMessage message) {
         System.out.println("KAFKA_LOW_STOCK_NOTIFICATION message=" + message);

@@ -18,7 +18,7 @@ public class ItemsMovedKafkaConsumer {
 
     @KafkaListener(
             topics = "${app.kafka.topics.items-moved}",
-            groupId = "${spring.kafka.consumer.group-id}"
+            groupId = "warehouse-items-moved-group"
     )
     public void onMessage(ItemsMovedKafkaMessage message) {
         System.out.println("KAFKA_ITEMS_MOVED_CONSUME payload=" + message);
