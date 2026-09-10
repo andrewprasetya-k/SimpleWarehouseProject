@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.warehouse.Kafka.Dto.ItemsMovedKafkaMessage;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

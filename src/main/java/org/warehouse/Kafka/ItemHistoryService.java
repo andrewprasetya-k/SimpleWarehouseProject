@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.stereotype.Service;
 import org.warehouse.Dto.ItemMoveHistoryPagedResponse;
+import org.warehouse.Kafka.Dto.ItemsMovedKafkaMessage;
 
 import java.time.Duration;
 import java.util.ArrayList;

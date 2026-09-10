@@ -14,6 +14,7 @@ import org.warehouse.Dto.ItemDetailResponse;
 import org.warehouse.Dto.ItemPagedResponse;
 import org.warehouse.Dto.WarehouseResponse;
 import org.warehouse.Event.ItemsMovedEvent;
+import org.warehouse.Event.LowStockEvent;
 import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
 import org.warehouse.Model.WarehouseModel;
@@ -123,7 +124,12 @@ public class ItemService {
         }
         item.setQuantity(item.getQuantity() - quantity);
 
-        return repo.save(item);
+        ItemModel savedItem = repo.save(item);
+        if(savedItem.getQuantity() < 5){
+            Integer warehouseId = savedItem.getWarehouse().getId();
+            eventPublisher.publishEvent(new LowStockEvent(savedItem.getId(),savedItem.getItemName(), savedItem.getQuantity(), warehouseId));
+        }
+        return savedItem;
     }
 
     @Transactional

@@ -1,6 +1,5 @@
-package org.warehouse.Kafka;
+package org.warehouse.Kafka.Dto;
 
-import java.time.Instant;
 import java.util.List;
 
 public record ItemsMovedKafkaMessage(

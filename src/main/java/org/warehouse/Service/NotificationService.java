@@ -1,7 +1,7 @@
 package org.warehouse.Service;
 
 import org.springframework.stereotype.Service;
-import org.warehouse.Kafka.ItemsMovedKafkaMessage;
+import org.warehouse.Kafka.Dto.ItemsMovedKafkaMessage;
 
 @Service
 public class NotificationService {

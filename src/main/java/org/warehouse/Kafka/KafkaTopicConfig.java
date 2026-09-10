@@ -18,4 +18,13 @@ public class KafkaTopicConfig {
                 .config(TopicConfig.RETENTION_MS_CONFIG, "3600000") //retention time
                 .build();
     }
+
+    @Bean
+    public NewTopic lowStockAlertTopic(@Value("${app.kafka.topics.low-stock-alerts}") String topicName) {
+        return TopicBuilder.name(topicName)
+                .partitions(1)
+                .replicas(1)
+                .config(TopicConfig.RETENTION_MS_CONFIG, "300000") //retention time
+                .build();
+    }
 }

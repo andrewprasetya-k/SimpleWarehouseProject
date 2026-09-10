@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.warehouse.Dto.*;
-import org.warehouse.Kafka.ItemsMovedKafkaMessage;
+import org.warehouse.Kafka.Dto.ItemsMovedKafkaMessage;
 import org.warehouse.Model.DigitalItemModel;
 import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
