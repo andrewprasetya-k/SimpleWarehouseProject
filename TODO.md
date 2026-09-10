@@ -7,5 +7,3 @@ Kafka:
 2. partition: pembagian topic menjadi lebih kecil, misal dari app picker kemarin satu lantai (satu topic) dibagi jadi beberapa partition per bin
 3. groupId: grup consumer yang akan menerima data dari topic
 
-TODO:
-1. tambahkan service yang saling berkaitan lewat kafka (warehouse dan edit stock, bisa stock dikurangi atau stock harus dalam kondisi tertentu)
