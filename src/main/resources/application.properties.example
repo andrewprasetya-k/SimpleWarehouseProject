@@ -23,6 +23,7 @@ spring.kafka.consumer.properties.spring.json.value.default.type=org.warehouse.Ka
 spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer
 
 app.kafka.topics.items-moved=warehouse.items-moved
+app.kafka.topics.low-stock-alerts=warehouse.low-stock-alerts
 
 logging.level.root=INFO
 logging.level.org.warehouse=INFO
