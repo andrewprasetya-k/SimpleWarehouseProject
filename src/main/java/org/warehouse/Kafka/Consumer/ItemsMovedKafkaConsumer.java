@@ -21,10 +21,8 @@ public class ItemsMovedKafkaConsumer {
             groupId = "warehouse-items-moved-group"
     )
     public void onMessage(ItemsMovedKafkaMessage message) {
-        System.out.println("KAFKA_ITEMS_MOVED_CONSUME payload=" + message);
-        System.out.println("KAFKA_ITEMS_MOVED_RECEIVED warehouseId=" + message.warehouseId()
-                + " itemIds=" + message.itemIds()
-                + " status=" + message.status());
+        log.info("KAFKA_ITEMS_MOVED_RECEIVED warehouseId={} itemIds={} status={}",
+                message.warehouseId(), message.itemIds(), message.status());
         notificationService.notifyItemsMoved(message);
     }
 }

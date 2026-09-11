@@ -11,15 +11,14 @@ import org.warehouse.Model.PhysicalItemModel;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.Lock;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ItemRepository extends JpaRepository<ItemModel, Integer> {
 
     //JPA
-    List<ItemModel> findByItemNameStartingWith(String itemName);
-    List<ItemModel> findByQuantityGreaterThan(int quantity);
+    Page<ItemModel> findByItemNameStartingWith(String itemName, Pageable pageable);
+    Page<ItemModel> findByQuantityGreaterThan(int quantity, Pageable pageable);
 
     //JPQL
     @Query("select i from ItemModel i where i.warehouse.id=:warehouseId")
@@ -29,9 +28,7 @@ public interface ItemRepository extends JpaRepository<ItemModel, Integer> {
     @Query("select i from ItemModel i where i.id = :id")
     Optional<ItemModel> findByIdForUpdate(Integer id);
 
-    //native sql
-    @Query(value = "SELECT i.*, p.weight FROM warehouse.item i " +
-            "JOIN warehouse.physical_item p ON i.id = p.id " +
-            "WHERE i.item_name LIKE CONCAT (:keyword, '%')", nativeQuery = true)
-    List<PhysicalItemModel> findPhysicalItemsByItemName(String keyword);
+    // JPQL – prefix search on physical items (avoids native-SQL pagination complexity)
+    @Query("select p from PhysicalItemModel p where p.itemName like concat(:keyword, '%')")
+    Page<PhysicalItemModel> findPhysicalItemsByItemName(String keyword, Pageable pageable);
 }

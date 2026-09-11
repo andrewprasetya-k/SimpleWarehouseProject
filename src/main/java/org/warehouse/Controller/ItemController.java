@@ -12,7 +12,6 @@ import org.warehouse.Model.PhysicalItemModel;
 import org.warehouse.Service.ItemService;
 import org.warehouse.Service.ItemHistoryService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -33,8 +32,8 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemResponse> findByItemNameStartingWith(@RequestParam String name) {
-        return service.findByItemNameStartingWith(name).stream().map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity())).toList();
+    public ItemPagedResponse findByItemNameStartingWith(@RequestParam String name, Pageable pageable) {
+        return service.findByItemNameStartingWith(name, pageable);
     }
 
     @GetMapping("/{id}")
@@ -47,13 +46,8 @@ public class ItemController {
     }
 
     @GetMapping("/quantity/{quantity}")
-    public List<ItemResponse> findByQuantityGreaterThan(@PathVariable int quantity) {
-        List<ItemModel> items = service.findByQuantityGreaterThan(quantity);
-        List<ItemResponse> response = new ArrayList<>();
-        for (ItemModel item : items) {
-            response.add(new ItemResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity()));
-        }
-        return response;
+    public ItemPagedResponse findByQuantityGreaterThan(@PathVariable int quantity, Pageable pageable) {
+        return service.findByQuantityGreaterThan(quantity, pageable);
     }
 
     @GetMapping("/warehouse/{warehouseId}")
@@ -62,11 +56,11 @@ public class ItemController {
     }
 
     @GetMapping("/physical/search")
-    public List<PhysicalItemModel> findPhysicalItemsByItemName(@RequestParam String name) {
-        return service.findPhysicalItemsByItemName(name);
+    public PhysicalItemPagedResponse findPhysicalItemsByItemName(@RequestParam String name, Pageable pageable) {
+        return service.findPhysicalItemsByItemName(name, pageable);
     }
 
-    //kafka endpoint
+    //fetch lgsg dari kafka
     @GetMapping("/warehouse/history/{warehouseId}")
     public ItemMoveHistoryPagedResponse<ItemsMovedKafkaMessage> getMoveHistory(
             @PathVariable int warehouseId,

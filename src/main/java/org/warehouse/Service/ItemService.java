@@ -12,6 +12,8 @@ import org.springframework.web.server.ResponseStatusException;
 import org.warehouse.Dto.ItemResponse;
 import org.warehouse.Dto.ItemDetailResponse;
 import org.warehouse.Dto.ItemPagedResponse;
+import org.warehouse.Dto.PhysicalItemPagedResponse;
+import org.warehouse.Dto.PhysicalItemResponse;
 import org.warehouse.Dto.WarehouseResponse;
 import org.warehouse.Event.ItemsMovedEvent;
 import org.warehouse.Event.LowStockEvent;
@@ -83,8 +85,13 @@ public class ItemService {
     }
 
     //appended repo
-    public List<ItemModel> findByQuantityGreaterThan(int quantity) {
-        return repo.findByQuantityGreaterThan(quantity);
+    public ItemPagedResponse findByQuantityGreaterThan(int quantity, Pageable pageable) {
+        Page<ItemModel> paged = repo.findByQuantityGreaterThan(quantity, pageable);
+        List<ItemResponse> content = paged.getContent().stream()
+                .map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity()))
+                .toList();
+        return new ItemPagedResponse(content, paged.getNumber(), paged.getSize(),
+                paged.getTotalElements(), paged.getTotalPages());
     }
 
     public ItemPagedResponse findByWarehouseId(Integer warehouseId, Pageable pageable) {
@@ -96,12 +103,22 @@ public class ItemService {
                 paged.getTotalElements(), paged.getTotalPages());
     }
 
-    public List<PhysicalItemModel> findPhysicalItemsByItemName(String keyword) {
-        return repo.findPhysicalItemsByItemName(keyword);
+    public PhysicalItemPagedResponse findPhysicalItemsByItemName(String keyword, Pageable pageable) {
+        Page<PhysicalItemModel> paged = repo.findPhysicalItemsByItemName(keyword, pageable);
+        List<PhysicalItemResponse> content = paged.getContent().stream()
+                .map(p -> new PhysicalItemResponse(p.getId(), p.getItemName(), p.getQuantity(), p.getPrice(), p.getWeight()))
+                .toList();
+        return new PhysicalItemPagedResponse(content, paged.getNumber(), paged.getSize(),
+                paged.getTotalElements(), paged.getTotalPages());
     }
 
-    public List<ItemModel> findByItemNameStartingWith(String itemName) {
-        return repo.findByItemNameStartingWith(itemName);
+    public ItemPagedResponse findByItemNameStartingWith(String itemName, Pageable pageable) {
+        Page<ItemModel> paged = repo.findByItemNameStartingWith(itemName, pageable);
+        List<ItemResponse> content = paged.getContent().stream()
+                .map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity()))
+                .toList();
+        return new ItemPagedResponse(content, paged.getNumber(), paged.getSize(),
+                paged.getTotalElements(), paged.getTotalPages());
     }
 
     @Transactional

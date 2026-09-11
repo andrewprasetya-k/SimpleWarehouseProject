@@ -1,23 +1,23 @@
 package org.warehouse.Controller;
 
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.warehouse.Dto.*;
 import org.warehouse.Model.WarehouseModel;
+import org.warehouse.Service.ItemService;
 import org.warehouse.Service.WarehouseService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/warehouses")
 public class WarehouseController {
     private final WarehouseService service;
+    private final ItemService itemService;
 
-    public WarehouseController(WarehouseService service) {
+    public WarehouseController(WarehouseService service, ItemService itemService) {
         this.service = service;
+        this.itemService = itemService;
     }
 
     @GetMapping
@@ -25,16 +25,25 @@ public class WarehouseController {
         return service.findAll(pageable);
     }
 
+    /** Returns warehouse detail (name, address) without loading its items collection. */
     @GetMapping("/{id}")
-    public ResponseEntity<WarehouseDetailResponse> findOne(@PathVariable int id) {
+    public ResponseEntity<WarehouseResponse> findOne(@PathVariable int id) {
         WarehouseModel warehouse = service.findById(id);
         if (warehouse == null) {
             return ResponseEntity.notFound().build();
         }
-        List<ItemResponse> items = warehouse.getItems().stream()
-                .map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity()))
-                .toList();
-        return ResponseEntity.ok(new WarehouseDetailResponse(warehouse.getId(), warehouse.getWarehouseName(), warehouse.getAddress(), items));
+        return ResponseEntity.ok(new WarehouseResponse(warehouse.getId(), warehouse.getWarehouseName(), warehouse.getAddress()));
+    }
+
+    /**
+     * Paginated list of items belonging to this warehouse.
+     * Kept as a separate endpoint so warehouse metadata can be fetched cheaply
+     * and items are only loaded on demand with pagination.
+     * Example: GET /warehouses/1/items?page=0&size=20
+     */
+    @GetMapping("/{id}/items")
+    public ItemPagedResponse findItemsByWarehouse(@PathVariable int id, Pageable pageable) {
+        return itemService.findByWarehouseId(id, pageable);
     }
 
     @PostMapping
