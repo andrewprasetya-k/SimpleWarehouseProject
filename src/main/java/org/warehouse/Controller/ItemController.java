@@ -57,11 +57,8 @@ public class ItemController {
     }
 
     @GetMapping("/warehouse/{warehouseId}")
-    public List<ItemResponse> findByWarehouseId(@PathVariable Integer warehouseId) {
-        return service.findByWarehouseId(warehouseId)
-                .stream()
-                .map(item -> new ItemResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity()))
-                .toList();
+    public ItemPagedResponse findByWarehouseId(@PathVariable Integer warehouseId, Pageable pageable) {
+        return service.findByWarehouseId(warehouseId, pageable);
     }
 
     @GetMapping("/physical/search")
@@ -143,7 +140,7 @@ public class ItemController {
     //bulk move
     @PutMapping("/warehouse/move/{warehouseId}")
     public void moveItemsToWarehouse(@PathVariable int warehouseId, @RequestBody List<Integer> itemIds){
-        service.moveItemsToWarehouse(warehouseId,itemIds);
+        service.moveItemsToWarehouse(warehouseId, itemIds);
     }
 
 }

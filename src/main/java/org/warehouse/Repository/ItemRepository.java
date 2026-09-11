@@ -1,5 +1,7 @@
 package org.warehouse.Repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -21,7 +23,7 @@ public interface ItemRepository extends JpaRepository<ItemModel, Integer> {
 
     //JPQL
     @Query("select i from ItemModel i where i.warehouse.id=:warehouseId")
-    List<ItemModel> findByWarehouseId(Integer warehouseId);
+    Page<ItemModel> findByWarehouseId(Integer warehouseId, Pageable pageable);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select i from ItemModel i where i.id = :id")
@@ -30,6 +32,6 @@ public interface ItemRepository extends JpaRepository<ItemModel, Integer> {
     //native sql
     @Query(value = "SELECT i.*, p.weight FROM warehouse.item i " +
             "JOIN warehouse.physical_item p ON i.id = p.id " +
-            "WHERE i.item_name LIKE CONCAT('%', :keyword, '%')", nativeQuery = true)
+            "WHERE i.item_name LIKE CONCAT (:keyword, '%')", nativeQuery = true)
     List<PhysicalItemModel> findPhysicalItemsByItemName(String keyword);
 }

@@ -87,8 +87,13 @@ public class ItemService {
         return repo.findByQuantityGreaterThan(quantity);
     }
 
-    public List<ItemModel> findByWarehouseId(Integer warehouseId) {
-        return repo.findByWarehouseId(warehouseId);
+    public ItemPagedResponse findByWarehouseId(Integer warehouseId, Pageable pageable) {
+        Page<ItemModel> paged = repo.findByWarehouseId(warehouseId, pageable);
+        List<ItemResponse> content = paged.getContent().stream()
+                .map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity()))
+                .toList();
+        return new ItemPagedResponse(content, paged.getNumber(), paged.getSize(),
+                paged.getTotalElements(), paged.getTotalPages());
     }
 
     public List<PhysicalItemModel> findPhysicalItemsByItemName(String keyword) {
@@ -167,7 +172,8 @@ public class ItemService {
         }
 
         // cek item sudah di warehouse
-        Set<Integer> existingIds = repo.findByWarehouseId(warehouseId).stream()
+        Set<Integer> existingIds = repo.findByWarehouseId(warehouseId, Pageable.unpaged())
+                .getContent().stream()
                 .map(ItemModel::getId)
                 .collect(Collectors.toSet());
 
