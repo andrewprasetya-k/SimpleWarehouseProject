@@ -87,16 +87,32 @@ public class ItemService {
         return repo.findByQuantityGreaterThan(quantity);
     }
 
+    public List<ItemModel> findByQuantityGreaterThan(int quantity, Pageable pageable) {
+        return repo.findByQuantityGreaterThan(quantity, pageable).getContent();
+    }
+
     public List<ItemModel> findByWarehouseId(Integer warehouseId) {
         return repo.findByWarehouseId(warehouseId);
+    }
+
+    public List<ItemModel> findByWarehouseId(Integer warehouseId, Pageable pageable) {
+        return repo.findByWarehouseId(warehouseId, pageable).getContent();
     }
 
     public List<PhysicalItemModel> findPhysicalItemsByItemName(String keyword) {
         return repo.findPhysicalItemsByItemName(keyword);
     }
 
+    public List<PhysicalItemModel> findPhysicalItemsByItemName(String keyword, Pageable pageable) {
+        return repo.findPhysicalItemsByItemName(keyword, pageable).getContent();
+    }
+
     public List<ItemModel> findByItemNameStartingWith(String itemName) {
         return repo.findByItemNameStartingWith(itemName);
+    }
+
+    public List<ItemModel> findByItemNameStartingWith(String itemName, Pageable pageable) {
+        return repo.findByItemNameStartingWith(itemName, pageable).getContent();
     }
 
     @Transactional

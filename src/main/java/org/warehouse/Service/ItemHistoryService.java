@@ -24,10 +24,22 @@ import java.util.UUID;
 public class ItemHistoryService {
     private final ConsumerFactory<String, ItemsMovedKafkaMessage> consumerFactory;
     private final String topicName;
+    private final int pollTimeoutMs;
+    private final int maxEmptyPolls;
+    private final int maxRecords;
 
-    public ItemHistoryService(ConsumerFactory<String, ItemsMovedKafkaMessage> consumerFactory, @Value("${app.kafka.topics.items-moved}") String topicName) {
+    public ItemHistoryService(
+            ConsumerFactory<String, ItemsMovedKafkaMessage> consumerFactory,
+            @Value("${app.kafka.topics.items-moved}") String topicName,
+            @Value("${app.kafka.history.poll-timeout-ms:100}") int pollTimeoutMs,
+            @Value("${app.kafka.history.max-empty-polls:1}") int maxEmptyPolls,
+            @Value("${app.kafka.history.max-records:500}") int maxRecords
+    ) {
         this.consumerFactory = consumerFactory;
         this.topicName = topicName;
+        this.pollTimeoutMs = pollTimeoutMs;
+        this.maxEmptyPolls = maxEmptyPolls;
+        this.maxRecords = maxRecords;
     }
 
     public ItemMoveHistoryPagedResponse<ItemsMovedKafkaMessage> getMoveItemHistoryByWarehouseId(int warehouseId, Pageable pageable) {
@@ -56,21 +68,26 @@ public class ItemHistoryService {
                 );
             }
 
-            // assign dan seek ke offset paling awal untuk semua partisi
+            // assign dan seek ke offset terbaru (bounded lookback) untuk menghindari full scan
             consumer.assign(partitions);
-            consumer.seekToBeginning(partitions);
+            consumer.seekToEnd(partitions);
+            int perPartitionLookback = Math.max(1, maxRecords / partitions.size());
+            for (TopicPartition partition : partitions) {
+                long currentPosition = consumer.position(partition);
+                long startOffset = Math.max(0L, currentPosition - perPartitionLookback);
+                consumer.seek(partition, startOffset);
+            }
 
             // perulangan (looping) sampai data di Kafka benar-benar habis
             boolean keepPolling = true;
             int emptyPollCount = 0; // untuk cek jika Kafka sudah tidak punya data lagi
 
             while (keepPolling) {
-                ConsumerRecords<String, ItemsMovedKafkaMessage> records = consumer.poll(Duration.ofMillis(500));
+                ConsumerRecords<String, ItemsMovedKafkaMessage> records = consumer.poll(Duration.ofMillis(pollTimeoutMs));
 
                 if (records.isEmpty()) {
                     emptyPollCount++;
-                    // jika 2 kali poll berturut-turut kosong, artinya data sudah habis difetch
-                    if (emptyPollCount >= 2) {
+                    if (emptyPollCount >= maxEmptyPolls) {
                         keepPolling = false;
                     }
                     continue;
@@ -84,6 +101,10 @@ public class ItemHistoryService {
                     ItemsMovedKafkaMessage msg = record.value();
                     if (msg != null && msg.warehouseId() != null && msg.warehouseId() == warehouseId) {
                         allFilteredMessages.add(msg);
+                        if (allFilteredMessages.size() >= maxRecords) {
+                            keepPolling = false;
+                            break;
+                        }
                     }
                 }
             }

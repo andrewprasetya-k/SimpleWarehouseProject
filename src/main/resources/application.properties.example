@@ -5,7 +5,7 @@ spring.datasource.driver-class-name=org.postgresql.Driver
 
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-spring.jpa.show-sql=true
+spring.jpa.show-sql=false
 
 spring.jackson.deserialization.fail-on-unknown-properties=true
 server.error.include-message=always
@@ -24,6 +24,9 @@ spring.kafka.producer.value-serializer=org.springframework.kafka.support.seriali
 
 app.kafka.topics.items-moved=warehouse.items-moved
 app.kafka.topics.low-stock-alerts=warehouse.low-stock-alerts
+app.kafka.history.poll-timeout-ms=100
+app.kafka.history.max-empty-polls=1
+app.kafka.history.max-records=500
 
 logging.level.root=INFO
 logging.level.org.warehouse=INFO

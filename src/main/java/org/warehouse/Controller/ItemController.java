@@ -33,8 +33,8 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemResponse> findByItemNameStartingWith(@RequestParam String name) {
-        return service.findByItemNameStartingWith(name).stream().map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity())).toList();
+    public List<ItemResponse> findByItemNameStartingWith(@RequestParam String name, Pageable pageable) {
+        return service.findByItemNameStartingWith(name, pageable).stream().map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity())).toList();
     }
 
     @GetMapping("/{id}")
@@ -47,8 +47,8 @@ public class ItemController {
     }
 
     @GetMapping("/quantity/{quantity}")
-    public List<ItemResponse> findByQuantityGreaterThan(@PathVariable int quantity) {
-        List<ItemModel> items = service.findByQuantityGreaterThan(quantity);
+    public List<ItemResponse> findByQuantityGreaterThan(@PathVariable int quantity, Pageable pageable) {
+        List<ItemModel> items = service.findByQuantityGreaterThan(quantity, pageable);
         List<ItemResponse> response = new ArrayList<>();
         for (ItemModel item : items) {
             response.add(new ItemResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity()));
@@ -57,16 +57,16 @@ public class ItemController {
     }
 
     @GetMapping("/warehouse/{warehouseId}")
-    public List<ItemResponse> findByWarehouseId(@PathVariable Integer warehouseId) {
-        return service.findByWarehouseId(warehouseId)
+    public List<ItemResponse> findByWarehouseId(@PathVariable Integer warehouseId, Pageable pageable) {
+        return service.findByWarehouseId(warehouseId, pageable)
                 .stream()
                 .map(item -> new ItemResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity()))
                 .toList();
     }
 
     @GetMapping("/physical/search")
-    public List<PhysicalItemModel> findPhysicalItemsByItemName(@RequestParam String name) {
-        return service.findPhysicalItemsByItemName(name);
+    public List<PhysicalItemModel> findPhysicalItemsByItemName(@RequestParam String name, Pageable pageable) {
+        return service.findPhysicalItemsByItemName(name, pageable);
     }
 
     //kafka endpoint
