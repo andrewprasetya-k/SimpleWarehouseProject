@@ -50,11 +50,6 @@ public class ItemController {
         return service.findByQuantityGreaterThan(quantity, pageable);
     }
 
-    @GetMapping("/warehouse/{warehouseId}")
-    public ItemPagedResponse findByWarehouseId(@PathVariable Integer warehouseId, Pageable pageable) {
-        return service.findByWarehouseId(warehouseId, pageable);
-    }
-
     @GetMapping("/physical/search")
     public PhysicalItemPagedResponse findPhysicalItemsByItemName(@RequestParam String name, Pageable pageable) {
         return service.findPhysicalItemsByItemName(name, pageable);

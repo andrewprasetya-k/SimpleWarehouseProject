@@ -35,12 +35,6 @@ public class WarehouseController {
         return ResponseEntity.ok(new WarehouseResponse(warehouse.getId(), warehouse.getWarehouseName(), warehouse.getAddress()));
     }
 
-    /**
-     * Paginated list of items belonging to this warehouse.
-     * Kept as a separate endpoint so warehouse metadata can be fetched cheaply
-     * and items are only loaded on demand with pagination.
-     * Example: GET /warehouses/1/items?page=0&size=20
-     */
     @GetMapping("/{id}/items")
     public ItemPagedResponse findItemsByWarehouse(@PathVariable int id, Pageable pageable) {
         return itemService.findByWarehouseId(id, pageable);
