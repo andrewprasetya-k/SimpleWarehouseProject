@@ -6,6 +6,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,10 @@ public class ItemHistoryService {
         this.topicName = topicName;
     }
 
+    @Cacheable(
+            value = "itemsHistory",
+            key = "#warehouseId + '-' + #pageable.pageNumber + '-' + #pageable.pageSize"
+    )
     public ItemMoveHistoryPagedResponse<ItemsMovedKafkaMessage> getMoveItemHistoryByWarehouseId(int warehouseId, Pageable pageable) {
         List<ItemsMovedKafkaMessage> allFilteredMessages = new ArrayList<>();
         String groupId = "history-consumer-" + UUID.randomUUID();
