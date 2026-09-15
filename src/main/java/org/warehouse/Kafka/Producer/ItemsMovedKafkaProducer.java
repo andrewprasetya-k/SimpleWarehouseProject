@@ -7,7 +7,9 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.warehouse.Kafka.Dto.ItemsMovedKafkaMessage;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -25,23 +27,34 @@ public class ItemsMovedKafkaProducer {
         this.topicName = topicName;
     }
 
-    public void publish(Integer warehouseId, List<Integer> itemIds, String status) {
+    public void publish(
+            UUID eventId,
+            Integer sourceWarehouseId,
+            Integer warehouseId,
+            List<Integer> itemIds,
+            String status,
+            Instant occurredAt
+    ) {
         ItemsMovedKafkaMessage message = new ItemsMovedKafkaMessage(
+                eventId,
+                sourceWarehouseId,
                 warehouseId,
                 itemIds,
-                status
+                status,
+                occurredAt
         );
 
-        System.out.println("KAFKA_ITEMS_MOVED_PRODUCE payload=" + message);
+        log.info("KAFKA_ITEMS_MOVED_PRODUCE payload={}", message);
 
-        CompletableFuture<?> sendResult = kafkaTemplate.send(topicName, warehouseId.toString(), message);
+        CompletableFuture<?> sendResult = kafkaTemplate.send(topicName, eventId.toString(), message);
         sendResult.whenComplete((result, error) -> {
             if (error != null) {
                 log.error("KAFKA_ITEMS_MOVED_SEND_FAILED warehouseId={} itemIds={} status={}", warehouseId, itemIds, status, error);
                 return;
             }
 
-            System.out.println("KAFKA_ITEMS_MOVED_SENT warehouseId=" + warehouseId + " itemIds=" + itemIds + " status=" + status);
+            log.info("KAFKA_ITEMS_MOVED_SENT eventId={} sourceWarehouseId={} warehouseId={} itemIds={} status={}",
+                    eventId, sourceWarehouseId, warehouseId, itemIds, status);
         });
     }
 }

@@ -25,7 +25,7 @@ public class LowStockKafkaProducer {
     public void publish(Integer itemId, String itemName, Integer remainingQuantity, Integer warehouseId) {
         LowStockKafkaMessage message = new LowStockKafkaMessage(itemId, itemName, remainingQuantity, warehouseId);
 
-        System.out.println("KAFKA_LOW_STOCK_PRODUCE payload=" + message);
+        log.info("KAFKA_LOW_STOCK_PRODUCE payload={}", message);
 
         CompletableFuture<?> sendResult = kafkaTemplate.send(topicName, itemId.toString(), message);
         sendResult.whenComplete((result, error) -> {
@@ -33,6 +33,9 @@ public class LowStockKafkaProducer {
                 log.error("KAFKA_LOW_STOCK_SEND_FAILED itemId={}", itemId, error);
                 return;
             }
+
+            log.info("KAFKA_LOW_STOCK_SENT itemId={} warehouseId={} remainingQuantity={}",
+                    itemId, warehouseId, remainingQuantity);
         });
     }
 
