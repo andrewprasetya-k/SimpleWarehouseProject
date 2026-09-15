@@ -26,6 +26,7 @@ public abstract class ItemModel {
         this.price = price;
     }
 
+
     public Integer getId() {
         return id;
     }

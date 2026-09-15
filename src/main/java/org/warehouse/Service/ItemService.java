@@ -24,6 +24,7 @@ import org.warehouse.Repository.ItemRepository;
 import org.warehouse.Repository.WarehouseRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -61,12 +62,28 @@ public class ItemService {
         return new ItemDetailResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity(), warehouse);
     }
 
-    @CacheEvict(value = "items")
-    public ItemModel save(ItemModel itemModel) {
+    @CacheEvict(value = "items", key = "#itemModel.id")
+    public ItemModel save(ItemModel itemModel, Integer warehouseId) {
+        // cek apakah ada request warehouse, jika null pakai default
+
+        int targetWarehouseId;
+        if (warehouseId != null){ targetWarehouseId = warehouseId;}
+        else{ targetWarehouseId = 1;}
+
+        // 2. Cari warehouse di DB
+        WarehouseModel warehouse = warehouseRepo.findById(targetWarehouseId).orElse(null);
+        if  (warehouse == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Warehouse not found with id " + targetWarehouseId);
+        }
+
+        // 3. Assign warehouse ke item
+        itemModel.setWarehouse(warehouse);
+
+        // 4. Save item
         return repo.save(itemModel);
     }
 
-    @CacheEvict(value = "items")
+    @CacheEvict(value = "items", key = "#itemModel.id")
     public ItemModel update(Integer id, ItemModel itemModel) {
         if(!repo.existsById(id)){
             return null;
@@ -75,7 +92,7 @@ public class ItemService {
         return repo.save(itemModel);
     }
 
-    @CacheEvict(value = "items")
+    @CacheEvict(value = "items", key = "#itemModel.id")
     public boolean delete(Integer id) {
         if(repo.existsById(id)){
             repo.deleteById(id);
