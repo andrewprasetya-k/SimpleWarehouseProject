@@ -105,7 +105,7 @@ public class ItemService {
         return repo.save(itemModel);
     }
 
-    @CacheEvict(value = "items", key = "#itemModel.id")
+    @CacheEvict(value = "items", allEntries = true)
     public boolean delete(Integer id) {
         if(repo.existsById(id)){
             repo.deleteById(id);
