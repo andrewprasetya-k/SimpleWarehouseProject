@@ -21,8 +21,7 @@ public class ItemsMovedKafkaListener {
                 event.sourceWarehouseId(),
                 event.warehouseId(),
                 event.itemsId(),
-                "COMMITTED",
-                event.occurredAt()
+                "COMMITTED"
         );
     }
 }

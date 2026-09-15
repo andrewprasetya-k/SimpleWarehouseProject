@@ -282,8 +282,7 @@ public class ItemService {
                         UUID.randomUUID(),
                         sourceWarehouseId,
                         warehouseId,
-                        List.copyOf(itemIds),
-                        Instant.now()
+                        List.copyOf(itemIds)
                 )
         );
     }
