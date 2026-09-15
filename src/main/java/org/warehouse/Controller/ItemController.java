@@ -86,8 +86,18 @@ public class ItemController {
 
     //put
     @PutMapping("/physical/{id}")
-    public ResponseEntity<PhysicalItemModel> updatePhysicalItem(@PathVariable int id, @RequestBody PhysicalItemModel item){
-        ItemModel updated =service.update(id, item);
+    public ResponseEntity<PhysicalItemModel> updatePhysicalItem(
+            @PathVariable int id,
+            @Valid @RequestBody PhysicalItemRequest request
+    ) {
+        PhysicalItemModel item = new PhysicalItemModel(
+                null,
+                request.itemName(),
+                request.quantity(),
+                request.price(),
+                request.weight()
+        );
+        ItemModel updated = service.update(id, item, request.warehouseId());
         if (updated == null){
             return ResponseEntity.notFound().build();
         }
@@ -95,8 +105,18 @@ public class ItemController {
     }
 
     @PutMapping("/digital/{id}")
-    public ResponseEntity<DigitalItemModel> updateDigitalItem(@PathVariable int id, @RequestBody DigitalItemModel item){
-        ItemModel updated =service.update(id, item);
+    public ResponseEntity<DigitalItemModel> updateDigitalItem(
+            @PathVariable int id,
+            @Valid @RequestBody DigitalItemRequest request
+    ) {
+        DigitalItemModel item = new DigitalItemModel(
+                null,
+                request.itemName(),
+                request.quantity(),
+                request.price(),
+                request.isLicensed()
+        );
+        ItemModel updated = service.update(id, item, request.warehouseId());
         if (updated == null){
             return ResponseEntity.notFound().build();
         }
