@@ -18,12 +18,14 @@ spring.kafka.bootstrap-servers=localhost:9092
 spring.kafka.consumer.group-id=warehouse-learning
 spring.kafka.consumer.auto-offset-reset=earliest
 spring.kafka.consumer.value-deserializer=org.springframework.kafka.support.serializer.JsonDeserializer
-spring.kafka.consumer.properties.spring.json.trusted.packages=org.warehouse.Kafka
-spring.kafka.consumer.properties.spring.json.value.default.type=org.warehouse.Kafka.ItemsMovedKafkaMessage
+spring.kafka.consumer.properties.spring.json.trusted.packages=org.warehouse.Kafka.Dto
+spring.kafka.consumer.properties.spring.json.type.mapping=itemsMoved:org.warehouse.Kafka.Dto.ItemsMovedKafkaMessage,lowStock:org.warehouse.Kafka.Dto.LowStockKafkaMessage
 spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer
 
 app.kafka.topics.items-moved=warehouse.items-moved
 app.kafka.topics.low-stock-alerts=warehouse.low-stock-alerts
+app.kafka.consumer.groups.items-moved=warehouse-items-moved-group
+app.kafka.consumer.groups.low-stock=warehouse-low-stock-group
 
 logging.level.root=INFO
 logging.level.org.warehouse=INFO
