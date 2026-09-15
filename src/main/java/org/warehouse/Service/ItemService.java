@@ -61,12 +61,12 @@ public class ItemService {
         return new ItemDetailResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity(), warehouse);
     }
 
-    @CacheEvict(value = "items", allEntries = true)
+    @CacheEvict(value = "items")
     public ItemModel save(ItemModel itemModel) {
         return repo.save(itemModel);
     }
 
-    @CacheEvict(value = "items", allEntries = true)
+    @CacheEvict(value = "items")
     public ItemModel update(Integer id, ItemModel itemModel) {
         if(!repo.existsById(id)){
             return null;
@@ -75,7 +75,7 @@ public class ItemService {
         return repo.save(itemModel);
     }
 
-    @CacheEvict(value = "items", allEntries = true)
+    @CacheEvict(value = "items")
     public boolean delete(Integer id) {
         if(repo.existsById(id)){
             repo.deleteById(id);
