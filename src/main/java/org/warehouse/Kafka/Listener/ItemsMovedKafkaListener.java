@@ -16,6 +16,13 @@ public class ItemsMovedKafkaListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onItemsMovedAfterCommit(ItemsMovedEvent event) {
-        producer.publish(event.warehouseId(), event.itemsId(), "COMMITTED");
+        producer.publish(
+                event.eventId(),
+                event.sourceWarehouseId(),
+                event.warehouseId(),
+                event.itemsId(),
+                "COMMITTED",
+                event.occurredAt()
+        );
     }
 }
