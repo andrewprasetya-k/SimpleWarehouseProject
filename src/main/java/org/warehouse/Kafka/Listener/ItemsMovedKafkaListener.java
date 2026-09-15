@@ -7,10 +7,10 @@ import org.warehouse.Event.ItemsMovedEvent;
 import org.warehouse.Kafka.Producer.ItemsMovedKafkaProducer;
 
 @Component
-public class ItemsMovedKafkaBridgeListener {
+public class ItemsMovedKafkaListener {
     private final ItemsMovedKafkaProducer producer;
 
-    public ItemsMovedKafkaBridgeListener(ItemsMovedKafkaProducer producer) {
+    public ItemsMovedKafkaListener(ItemsMovedKafkaProducer producer) {
         this.producer = producer;
     }
 

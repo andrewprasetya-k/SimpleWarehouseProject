@@ -7,10 +7,10 @@ import org.warehouse.Event.LowStockEvent;
 import org.warehouse.Kafka.Producer.LowStockKafkaProducer;
 
 @Component
-public class LowStockKafkaBridgeListener {
+public class LowStockKafkaListener {
     private final LowStockKafkaProducer producer;
 
-    public LowStockKafkaBridgeListener(LowStockKafkaProducer producer) {
+    public LowStockKafkaListener(LowStockKafkaProducer producer) {
         this.producer = producer;
     }
 
