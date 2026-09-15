@@ -64,24 +64,23 @@ public class ItemController {
         return itemHistoryService.getMoveItemHistoryByWarehouseId(warehouseId, pageable);
     }
 
-    //post
     @PostMapping("/physical")
     public PhysicalItemResponse createPhysicalItem(@Valid @RequestBody PhysicalItemRequest request){
-        //dto mapping
         PhysicalItemModel entity=new PhysicalItemModel(null, request.itemName(), request.quantity(), request.price(), request.weight());
-        //untuk save ke db
-        PhysicalItemModel saved=(PhysicalItemModel) service.save(entity);
-        //mapping ke response dto untuk menjadi response
+
+        // Pass warehouseId ke method save existing
+        PhysicalItemModel saved=(PhysicalItemModel) service.save(entity, request.warehouseId());
+
         return new PhysicalItemResponse(saved.getId(),saved.getItemName(), saved.getQuantity(),saved.getPrice(),saved.getWeight());
     }
 
     @PostMapping("/digital")
     public DigitalItemResponse createDigitalItem(@Valid @RequestBody DigitalItemRequest request){
-        //dto mapping
         DigitalItemModel entity=new DigitalItemModel(null, request.itemName(), request.quantity(), request.price(), request.isLicensed());
-        //untuk save ke db
-        DigitalItemModel saved=(DigitalItemModel) service.save(entity);
-        //mapping ke response dto untuk menjadi response
+
+        // Pass warehouseId ke method save existing
+        DigitalItemModel saved=(DigitalItemModel) service.save(entity, request.warehouseId());
+
         return new DigitalItemResponse(saved.getId(),saved.getItemName(), saved.getQuantity(),saved.getPrice(),saved.isLisenced());
     }
 
