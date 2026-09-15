@@ -5,6 +5,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import org.warehouse.Dto.ItemMoveHistoryPagedResponse;
 import org.warehouse.Kafka.Dto.ItemsMovedKafkaMessage;
 
@@ -21,8 +24,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE;
+
 @Service
 public class ItemHistoryService {
+    private static final Logger log = LoggerFactory.getLogger(ItemHistoryService.class);
     private final ConsumerFactory<String, ItemsMovedKafkaMessage> consumerFactory;
     private final String topicName;
 
@@ -93,8 +99,12 @@ public class ItemHistoryService {
                 }
             }
         } catch (Exception e) {
-            // logging error
-            System.err.println("Gagal fetch data dari Kafka: " + e.getMessage());
+            log.error("Failed to fetch item move history from Kafka for warehouseId={}", warehouseId, e);
+            throw new ResponseStatusException(
+                    SERVICE_UNAVAILABLE,
+                    "Item move history is temporarily unavailable",
+                    e
+            );
         }
 
         int totalElements = allFilteredMessages.size();
