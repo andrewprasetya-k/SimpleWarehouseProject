@@ -2,6 +2,7 @@ package org.warehouse.Service;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,9 +26,10 @@ import org.warehouse.Repository.WarehouseRepository;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.UUID;
+import java.time.Instant;
 
 @Service
 public class ItemService {
@@ -42,7 +44,7 @@ public class ItemService {
         this.eventPublisher = eventPublisher;
     }
 
-    @Cacheable(value="items", key="#pageable.pageNumber + '-' + #pageable.pageSize")
+    @Cacheable(value="item-pages", key="#pageable.pageNumber + '-' + #pageable.pageSize")
     public ItemPagedResponse findAll(Pageable pageable) {
         Page<ItemModel> paged = repo.findAll(pageable);
         List<ItemResponse> content = paged.getContent().stream().map(i -> new ItemResponse(i.getId(),i.getItemName(),i.getPrice(),i.getQuantity())).toList();
@@ -63,7 +65,10 @@ public class ItemService {
         return new ItemDetailResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity(), warehouse);
     }
 
-    @CacheEvict(value = "items", key = "#itemModel.id")
+    @Caching(evict = {
+            @CacheEvict(value = "items", allEntries = true),
+            @CacheEvict(value = "item-pages", allEntries = true)
+    })
     public ItemModel save(ItemModel itemModel, Integer warehouseId) {
         // cek apakah ada request warehouse, jika null pakai default
 
@@ -83,7 +88,10 @@ public class ItemService {
         return repo.save(itemModel);
     }
 
-    @CacheEvict(value = "items", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "items", allEntries = true),
+            @CacheEvict(value = "item-pages", allEntries = true)
+    })
     public ItemModel update(Integer id, ItemModel itemModel, Integer warehouseId) {
         if(!repo.existsById(id)){
             return null;
@@ -105,7 +113,10 @@ public class ItemService {
         return repo.save(itemModel);
     }
 
-    @CacheEvict(value = "items", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "items", allEntries = true),
+            @CacheEvict(value = "item-pages", allEntries = true)
+    })
     public boolean delete(Integer id) {
         if(repo.existsById(id)){
             repo.deleteById(id);
@@ -152,7 +163,10 @@ public class ItemService {
     }
 
     @Transactional
-    @CacheEvict(value = "items", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "items", allEntries = true),
+            @CacheEvict(value = "item-pages", allEntries = true)
+    })
     public ItemModel addQuantity(Integer id, Integer quantity) {
         if (quantity == null || quantity <= 0 || quantity > 100) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantity must be between 0 and 100");
@@ -164,7 +178,10 @@ public class ItemService {
     }
 
     @Transactional
-    @CacheEvict(value = "items", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "items", allEntries = true),
+            @CacheEvict(value = "item-pages", allEntries = true)
+    })
     public ItemModel decreaseQuantity(Integer id, Integer quantity) {
         if (quantity == null || quantity <= 0 || quantity > 100) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantity must be between 0 and 100");
@@ -185,11 +202,17 @@ public class ItemService {
     }
 
     @Transactional
-    @CacheEvict(value = "items", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "items", allEntries = true),
+            @CacheEvict(value = "item-pages", allEntries = true)
+    })
     public void moveItemsToWarehouse(Integer warehouseId, List<Integer> itemIds) {
-        eventPublisher.publishEvent(
-                new ItemsMovedEvent(warehouseId, itemIds)
-        );
+        if (warehouseId == null || itemIds == null || itemIds.isEmpty() || itemIds.stream().anyMatch(Objects::isNull)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "warehouseId and at least one non-null itemId are required"
+            );
+        }
 
         WarehouseModel warehouse = warehouseRepo.findById(warehouseId)
                 .orElseThrow(() ->
@@ -218,6 +241,19 @@ public class ItemService {
             );
         }
 
+        Set<Integer> sourceWarehouseIds = items.stream()
+                .map(item -> item.getWarehouse() == null ? null : item.getWarehouse().getId())
+                .collect(Collectors.toSet());
+
+        if (sourceWarehouseIds.contains(null)) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "All items must already belong to a source warehouse"
+            );
+        }
+
+        Integer sourceWarehouseId = sourceWarehouseIds.iterator().next();
+
         // cek item sudah di warehouse
         Set<Integer> existingIds = repo.findByWarehouseId(warehouseId, Pageable.unpaged())
                 .getContent().stream()
@@ -240,6 +276,16 @@ public class ItemService {
         items.forEach(item -> item.setWarehouse(warehouse));
 
         repo.saveAll(items);
+
+        eventPublisher.publishEvent(
+                new ItemsMovedEvent(
+                        UUID.randomUUID(),
+                        sourceWarehouseId,
+                        warehouseId,
+                        List.copyOf(itemIds),
+                        Instant.now()
+                )
+        );
     }
 
 }
