@@ -7,7 +7,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.warehouse.Kafka.Dto.ItemsMovedKafkaMessage;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -32,16 +31,14 @@ public class ItemsMovedKafkaProducer {
             Integer sourceWarehouseId,
             Integer warehouseId,
             List<Integer> itemIds,
-            String status,
-            Instant occurredAt
+            String status
     ) {
         ItemsMovedKafkaMessage message = new ItemsMovedKafkaMessage(
                 eventId,
                 sourceWarehouseId,
                 warehouseId,
                 itemIds,
-                status,
-                occurredAt
+                status
         );
 
         log.info("KAFKA_ITEMS_MOVED_PRODUCE payload={}", message);

@@ -8,7 +8,6 @@ public record ItemsMovedEvent(
         UUID eventId,
         Integer sourceWarehouseId,
         Integer warehouseId,
-        List<Integer> itemsId,
-        Instant occurredAt
+        List<Integer> itemsId
 ) {
 }
