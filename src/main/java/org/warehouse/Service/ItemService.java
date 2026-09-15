@@ -24,6 +24,7 @@ import org.warehouse.Repository.ItemRepository;
 import org.warehouse.Repository.WarehouseRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -67,8 +68,7 @@ public class ItemService {
         // cek apakah ada request warehouse, jika null pakai default
 
         int targetWarehouseId;
-        if (warehouseId != null){ targetWarehouseId = warehouseId;}
-        else{ targetWarehouseId = 1;}
+        targetWarehouseId = Objects.requireNonNullElse(warehouseId, 1);
 
         // 2. Cari warehouse di DB
         WarehouseModel warehouse = warehouseRepo.findById(targetWarehouseId).orElse(null);
@@ -83,12 +83,25 @@ public class ItemService {
         return repo.save(itemModel);
     }
 
-    @CacheEvict(value = "items", key = "#itemModel.id")
-    public ItemModel update(Integer id, ItemModel itemModel) {
+    @CacheEvict(value = "items", allEntries = true)
+    public ItemModel update(Integer id, ItemModel itemModel, Integer warehouseId) {
         if(!repo.existsById(id)){
             return null;
         }
+
+        int targetWarehouseId;
+        targetWarehouseId = Objects.requireNonNullElse(warehouseId, 1);
+
+        WarehouseModel warehouse = warehouseRepo.findById(targetWarehouseId).orElse(null);
+        if (warehouse == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Warehouse not found with id " + targetWarehouseId
+            );
+        }
+
         itemModel.setId(id);
+        itemModel.setWarehouse(warehouse);
         return repo.save(itemModel);
     }
 
