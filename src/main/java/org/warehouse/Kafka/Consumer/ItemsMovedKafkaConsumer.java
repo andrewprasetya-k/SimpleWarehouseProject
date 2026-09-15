@@ -18,7 +18,7 @@ public class ItemsMovedKafkaConsumer {
 
     @KafkaListener(
             topics = "${app.kafka.topics.items-moved}",
-            groupId = "warehouse-items-moved-group"
+            groupId = "${app.kafka.consumer.groups.items-moved}"
     )
     public void onMessage(ItemsMovedKafkaMessage message) {
         log.info("KAFKA_ITEMS_MOVED_RECEIVED warehouseId={} itemIds={} status={}",
