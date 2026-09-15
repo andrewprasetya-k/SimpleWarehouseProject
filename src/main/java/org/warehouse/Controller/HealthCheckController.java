@@ -12,9 +12,9 @@ import java.util.Map;
 @RequestMapping("/health")
 public class HealthCheckController {
 
-    public final NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    public HealthCheckController(NotificationService notificationService, NotificationService notificationService1) {
+    public HealthCheckController(NotificationService notificationService) {
         this.notificationService = notificationService;
     }
 
