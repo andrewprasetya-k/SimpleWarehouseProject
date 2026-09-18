@@ -14,7 +14,7 @@ public abstract class ItemModel {
     private Double price;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="warehouse_id")
+    @JoinColumn(name="warehouse_id", nullable = false)
     private WarehouseModel warehouse;
 
     protected ItemModel() {}
