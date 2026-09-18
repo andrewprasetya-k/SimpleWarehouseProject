@@ -256,11 +256,8 @@ public class ItemService {
                 .map(item -> item.getWarehouse() == null ? null : item.getWarehouse().getId())
                 .collect(Collectors.toSet());
 
-        if (sourceWarehouseIds.contains(null)) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "All items must already belong to a source warehouse"
-            );
+        if (sourceWarehouseIds.size() > 1) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "All items must come from the same warehouse");
         }
 
         Integer sourceWarehouseId = sourceWarehouseIds.iterator().next();
