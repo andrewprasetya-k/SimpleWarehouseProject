@@ -78,13 +78,17 @@ public class ItemService {
     public ItemModel save(ItemModel itemModel, Integer warehouseId) {
         // cek apakah ada request warehouse, jika null pakai default
 
-        int targetWarehouseId;
-        targetWarehouseId = Objects.requireNonNullElse(warehouseId, 1);
+//        int targetWarehouseId;
+//        targetWarehouseId = Objects.requireNonNullElse(warehouseId, 1);
+        if (warehouseId == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Warehouse id must not be null");
+        }
+
 
         // 2. Cari warehouse di DB
-        WarehouseModel warehouse = warehouseRepo.findById(targetWarehouseId).orElse(null);
+        WarehouseModel warehouse = warehouseRepo.findById(warehouseId).orElse(null);
         if  (warehouse == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Warehouse not found with id " + targetWarehouseId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Warehouse not found with id " + warehouseId);
         }
 
         // 3. Assign warehouse ke item
@@ -202,7 +206,7 @@ public class ItemService {
 
         ItemModel savedItem = repo.save(item);
         if(savedItem.getQuantity() < 5){
-            Integer warehouseId = savedItem.getWarehouse().getId();
+            Integer warehouseId = savedItem.getWarehouse() != null ? savedItem.getWarehouse().getId() : null;
             eventPublisher.publishEvent(new LowStockEvent(savedItem.getId(),savedItem.getItemName(), savedItem.getQuantity(), warehouseId));
         }
         return savedItem;
@@ -260,6 +264,14 @@ public class ItemService {
         }
 
         Integer sourceWarehouseId = sourceWarehouseIds.iterator().next();
+        eventPublisher.publishEvent(
+                new ItemsMovedEvent(
+                        UUID.randomUUID(),
+                        sourceWarehouseId,
+                        warehouseId,
+                        List.copyOf(itemIds)
+                )
+        );
 
         // cek item sudah di warehouse
         Set<Integer> existingIds = repo.findByWarehouseId(warehouseId, Pageable.unpaged())
@@ -283,15 +295,6 @@ public class ItemService {
         items.forEach(item -> item.setWarehouse(warehouse));
 
         repo.saveAll(items);
-
-        eventPublisher.publishEvent(
-                new ItemsMovedEvent(
-                        UUID.randomUUID(),
-                        sourceWarehouseId,
-                        warehouseId,
-                        List.copyOf(itemIds)
-                )
-        );
     }
 
 }
