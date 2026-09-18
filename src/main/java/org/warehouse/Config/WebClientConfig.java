@@ -11,7 +11,7 @@ public class WebClientConfig {
     @Bean
     public WebClient webClient(
             WebClient.Builder builder,
-            @Value("${notification.service.base-url:http://localhost:8081}") String baseUrl
+            @Value("${notification.service.base-url:http://localhost:8080}") String baseUrl
     ) {
         return builder.baseUrl(baseUrl).build();
     }

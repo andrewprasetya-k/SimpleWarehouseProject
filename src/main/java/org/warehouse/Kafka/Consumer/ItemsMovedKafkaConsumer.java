@@ -23,6 +23,9 @@ public class ItemsMovedKafkaConsumer {
     public void onMessage(ItemsMovedKafkaMessage message) {
         log.info("KAFKA_ITEMS_MOVED_RECEIVED warehouseId={} itemIds={} status={}",
                 message.warehouseId(), message.itemIds(), message.status());
-        notificationService.notifyItemsMoved(message);
+        notificationService.notifyItemsMoved(message)
+                .doOnSuccess(unused -> log.info("Notifikasi berhasil dikirim"))
+                .doOnError(error -> log.error("Notifikasi move item gagal dikirim", error))
+                .subscribe();
     }
 }
