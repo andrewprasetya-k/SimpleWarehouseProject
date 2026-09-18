@@ -1,5 +1,7 @@
 package org.warehouse.Service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
@@ -34,9 +36,11 @@ import java.time.Instant;
 @Service
 public class ItemService {
 
+    private static final Logger log = LoggerFactory.getLogger(ItemService.class);
     private final ItemRepository repo;
     private final WarehouseRepository warehouseRepo;
     private final ApplicationEventPublisher eventPublisher;
+
 
     public ItemService(ItemRepository repo, WarehouseRepository warehouseRepo,  ApplicationEventPublisher eventPublisher) {
         this.repo = repo;
@@ -47,6 +51,7 @@ public class ItemService {
     @Cacheable(value="item-pages", key="#pageable.pageNumber + '-' + #pageable.pageSize")
     public ItemPagedResponse findAll(Pageable pageable) {
         Page<ItemModel> paged = repo.findAll(pageable);
+        log.info("findAll called");
         List<ItemResponse> content = paged.getContent().stream().map(i -> new ItemResponse(i.getId(),i.getItemName(),i.getPrice(),i.getQuantity())).toList();
         return new ItemPagedResponse(content,paged.getNumber(),paged.getSize(), paged.getTotalElements(), paged.getTotalPages());
     }
@@ -54,6 +59,7 @@ public class ItemService {
     @Cacheable(value="items", key="#id")
     public ItemDetailResponse findById(Integer id) {
         ItemModel item = repo.findById(id).orElse(null);
+        log.info("findById({}) called", id);
         if (item == null) {
             return null;
         }
@@ -128,6 +134,7 @@ public class ItemService {
     //appended repo
     public ItemPagedResponse findByQuantityGreaterThan(int quantity, Pageable pageable) {
         Page<ItemModel> paged = repo.findByQuantityGreaterThan(quantity, pageable);
+        log.info("findByQuantityGreaterThan {} called", quantity);
         List<ItemResponse> content = paged.getContent().stream()
                 .map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity()))
                 .toList();
