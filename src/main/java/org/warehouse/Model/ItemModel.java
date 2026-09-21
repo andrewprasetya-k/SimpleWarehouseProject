@@ -4,7 +4,11 @@ import jakarta.persistence.*;
 
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
-@Table(name="item", schema="warehouse")
+@Table(name="item", schema="warehouse", indexes = {
+        @Index(name = "idx_item_name", columnList = "itemName"),
+        @Index(name = "idx_item_quantity", columnList = "quantity"),
+        @Index(name = "idx_item_warehouse", columnList = "warehouse_id")
+})
 public abstract class ItemModel {
     @Id
     @GeneratedValue

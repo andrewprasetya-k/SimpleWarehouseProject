@@ -9,6 +9,7 @@ import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
 
 import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Lock;
 
 import java.util.Collection;
@@ -21,6 +22,9 @@ public interface ItemRepository extends JpaRepository<ItemModel, Integer> {
     Page<ItemModel> findByItemNameStartingWith(String itemName, Pageable pageable);
     Page<ItemModel> findByQuantityGreaterThan(int quantity, Pageable pageable);
     boolean existsByIdInAndWarehouseId(Collection<Integer> ids, Integer warehouseId);
+
+    @EntityGraph(attributePaths = "warehouse")
+    Optional<ItemModel> findWithWarehouseById(Integer id);
 
     //JPQL
     @Query("select i from ItemModel i where i.warehouse.id=:warehouseId")
