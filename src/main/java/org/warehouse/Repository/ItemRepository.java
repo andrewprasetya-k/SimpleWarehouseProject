@@ -22,6 +22,7 @@ public interface ItemRepository extends JpaRepository<ItemModel, Integer> {
     Page<ItemModel> findByItemNameStartingWith(String itemName, Pageable pageable);
     Page<ItemModel> findByQuantityGreaterThan(int quantity, Pageable pageable);
     boolean existsByIdInAndWarehouseId(Collection<Integer> ids, Integer warehouseId);
+    boolean existsByWarehouseId(Integer warehouseId);
 
     @EntityGraph(attributePaths = "warehouse")
     Optional<ItemModel> findWithWarehouseById(Integer id);
