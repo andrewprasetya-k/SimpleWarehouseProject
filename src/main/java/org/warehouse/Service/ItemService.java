@@ -118,6 +118,13 @@ public class ItemService {
             return null;
         }
 
+        if (!itemModel.getClass().isInstance(existing)) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Item " + id + " is a " + existing.getClass().getSimpleName() + " and cannot be updated as " + itemModel.getClass().getSimpleName() + " " + itemModel.getClass().isInstance(existing) + " " + itemModel.getClass()
+            );
+        }
+
         int targetWarehouseId;
         targetWarehouseId = Objects.requireNonNullElse(warehouseId, 1);
 
