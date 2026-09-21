@@ -216,7 +216,7 @@ public class ItemService {
         if (quantity == null || quantity <= 0 || quantity > 100) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantity must be between 0 and 100");
         }
-        ItemModel item = repo.findByIdForUpdate(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found " + id));
+        ItemModel item = repo.findByIdForQtyUpdate(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found " + id));
         item.setQuantity(item.getQuantity() + quantity);
 
         return repo.save(item);
@@ -236,7 +236,7 @@ public class ItemService {
         if (quantity == null || quantity <= 0 || quantity > 100) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantity must be between 0 and 100");
         }
-        ItemModel item = repo.findByIdForUpdate(id).orElseThrow(() ->
+        ItemModel item = repo.findByIdForQtyUpdate(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found " + id));
         if (item.getQuantity() - quantity < 0 ) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Insufficient stock for item " + id);
