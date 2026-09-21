@@ -32,7 +32,7 @@ public interface ItemRepository extends JpaRepository<ItemModel, Integer> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select i from ItemModel i where i.id = :id")
-    Optional<ItemModel> findByIdForUpdate(Integer id);
+    Optional<ItemModel> findByIdForQtyUpdate(Integer id);
 
     // JPQL – prefix search on physical items (avoids native-SQL pagination complexity)
     @Query("select p from PhysicalItemModel p where p.itemName like concat(:keyword, '%')")
