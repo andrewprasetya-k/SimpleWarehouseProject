@@ -2,8 +2,16 @@ spring.datasource.url=jdbc:postgresql://<host-pooler-dari-tab-session-pooler>:54
 spring.datasource.username=postgres.<project-ref>
 spring.datasource.password=<isi-password-supabase-kamu>
 spring.datasource.driver-class-name=org.postgresql.Driver
+spring.datasource.hikari.maximum-pool-size=5
+spring.datasource.hikari.minimum-idle=1
+spring.datasource.hikari.connection-timeout=10000
+spring.datasource.hikari.max-lifetime=300000
 
 spring.jpa.hibernate.ddl-auto=update
+spring.jpa.open-in-view=false
+spring.jpa.properties.hibernate.jdbc.batch_size=20
+spring.jpa.properties.hibernate.order_inserts=true
+spring.jpa.properties.hibernate.order_updates=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 spring.jpa.show-sql=true
 

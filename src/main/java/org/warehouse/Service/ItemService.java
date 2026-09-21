@@ -57,7 +57,7 @@ public class ItemService {
 
     @Cacheable(value="items", key="#id")
     public ItemDetailResponse findById(Integer id) {
-        ItemModel item = repo.findById(id).orElse(null);
+        ItemModel item = repo.findWithWarehouseById(id).orElse(null);
         log.info("findById({}) called", id);
         if (item == null) {
             return null;
@@ -73,7 +73,12 @@ public class ItemService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "items", allEntries = true),
-            @CacheEvict(value = "item-pages", allEntries = true)
+            @CacheEvict(value = "item-pages", allEntries = true),
+            @CacheEvict(value = "item-qty-pages", allEntries = true),
+            @CacheEvict(value = "item-warehouse-pages", allEntries = true),
+            @CacheEvict(value = "item-physical-pages", allEntries = true),
+            @CacheEvict(value = "item-search-pages", allEntries = true),
+            @CacheEvict(value = "itemsHistory", allEntries = true)
     })
     public ItemModel save(ItemModel itemModel, Integer warehouseId) {
         // cek apakah ada request warehouse, jika null pakai default
@@ -100,9 +105,19 @@ public class ItemService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "items", allEntries = true),
-            @CacheEvict(value = "item-pages", allEntries = true)
+            @CacheEvict(value = "item-pages", allEntries = true),
+            @CacheEvict(value = "item-qty-pages", allEntries = true),
+            @CacheEvict(value = "item-warehouse-pages", allEntries = true),
+            @CacheEvict(value = "item-physical-pages", allEntries = true),
+            @CacheEvict(value = "item-search-pages", allEntries = true),
+            @CacheEvict(value = "itemsHistory", allEntries = true)
     })
     public ItemModel update(Integer id, ItemModel itemModel, Integer warehouseId) {
+        ItemModel existing = repo.findById(id).orElse(null);
+        if (existing == null) {
+            return null;
+        }
+
         int targetWarehouseId;
         targetWarehouseId = Objects.requireNonNullElse(warehouseId, 1);
 
@@ -122,17 +137,24 @@ public class ItemService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "items", allEntries = true),
-            @CacheEvict(value = "item-pages", allEntries = true)
+            @CacheEvict(value = "item-pages", allEntries = true),
+            @CacheEvict(value = "item-qty-pages", allEntries = true),
+            @CacheEvict(value = "item-warehouse-pages", allEntries = true),
+            @CacheEvict(value = "item-physical-pages", allEntries = true),
+            @CacheEvict(value = "item-search-pages", allEntries = true),
+            @CacheEvict(value = "itemsHistory", allEntries = true)
     })
     public boolean delete(Integer id) {
-        if(repo.existsById(id)){
-            repo.deleteById(id);
-            return true;
+        ItemModel existing = repo.findById(id).orElse(null);
+        if (existing == null) {
+            return false;
         }
-        return false;
+        repo.delete(existing);
+        return true;
     }
 
     //appended repo
+    @Cacheable(value="item-qty-pages", key="#quantity + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()")
     public ItemPagedResponse findByQuantityGreaterThan(int quantity, Pageable pageable) {
         Page<ItemModel> paged = repo.findByQuantityGreaterThan(quantity, pageable);
         log.info("findByQuantityGreaterThan {} called", quantity);
@@ -143,6 +165,7 @@ public class ItemService {
                 paged.getTotalElements(), paged.getTotalPages());
     }
 
+    @Cacheable(value="item-warehouse-pages", key="#warehouseId + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()")
     public ItemPagedResponse findByWarehouseId(Integer warehouseId, Pageable pageable) {
         Page<ItemModel> paged = repo.findByWarehouseId(warehouseId, pageable);
         List<ItemResponse> content = paged.getContent().stream()
@@ -152,6 +175,7 @@ public class ItemService {
                 paged.getTotalElements(), paged.getTotalPages());
     }
 
+    @Cacheable(value="item-physical-pages", key="#keyword + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()")
     public PhysicalItemPagedResponse findPhysicalItemsByItemName(String keyword, Pageable pageable) {
         Page<PhysicalItemModel> paged = repo.findPhysicalItemsByItemName(keyword, pageable);
         List<PhysicalItemResponse> content = paged.getContent().stream()
@@ -161,6 +185,7 @@ public class ItemService {
                 paged.getTotalElements(), paged.getTotalPages());
     }
 
+    @Cacheable(value="item-search-pages", key="#itemName + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()")
     public ItemPagedResponse findByItemNameStartingWith(String itemName, Pageable pageable) {
         Page<ItemModel> paged = repo.findByItemNameStartingWith(itemName, pageable);
         List<ItemResponse> content = paged.getContent().stream()
@@ -173,7 +198,12 @@ public class ItemService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "items", allEntries = true),
-            @CacheEvict(value = "item-pages", allEntries = true)
+            @CacheEvict(value = "item-pages", allEntries = true),
+            @CacheEvict(value = "item-qty-pages", allEntries = true),
+            @CacheEvict(value = "item-warehouse-pages", allEntries = true),
+            @CacheEvict(value = "item-physical-pages", allEntries = true),
+            @CacheEvict(value = "item-search-pages", allEntries = true),
+            @CacheEvict(value = "itemsHistory", allEntries = true)
     })
     public ItemModel addQuantity(Integer id, Integer quantity) {
         if (quantity == null || quantity <= 0 || quantity > 100) {
@@ -188,7 +218,12 @@ public class ItemService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "items", allEntries = true),
-            @CacheEvict(value = "item-pages", allEntries = true)
+            @CacheEvict(value = "item-pages", allEntries = true),
+            @CacheEvict(value = "item-qty-pages", allEntries = true),
+            @CacheEvict(value = "item-warehouse-pages", allEntries = true),
+            @CacheEvict(value = "item-physical-pages", allEntries = true),
+            @CacheEvict(value = "item-search-pages", allEntries = true),
+            @CacheEvict(value = "itemsHistory", allEntries = true)
     })
     public ItemModel decreaseQuantity(Integer id, Integer quantity) {
         if (quantity == null || quantity <= 0 || quantity > 100) {
@@ -212,7 +247,12 @@ public class ItemService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "items", allEntries = true),
-            @CacheEvict(value = "item-pages", allEntries = true)
+            @CacheEvict(value = "item-pages", allEntries = true),
+            @CacheEvict(value = "item-qty-pages", allEntries = true),
+            @CacheEvict(value = "item-warehouse-pages", allEntries = true),
+            @CacheEvict(value = "item-physical-pages", allEntries = true),
+            @CacheEvict(value = "item-search-pages", allEntries = true),
+            @CacheEvict(value = "itemsHistory", allEntries = true)
     })
     public void moveItemsToWarehouse(Integer warehouseId, List<Integer> itemIds) {
         if (warehouseId == null || itemIds == null || itemIds.isEmpty() || itemIds.stream().anyMatch(Objects::isNull)) {
