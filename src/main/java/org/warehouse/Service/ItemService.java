@@ -81,14 +81,9 @@ public class ItemService {
             @CacheEvict(value = "itemsHistory", allEntries = true)
     })
     public ItemModel save(ItemModel itemModel, Integer warehouseId) {
-        // cek apakah ada request warehouse, jika null pakai default
-
-//        int targetWarehouseId;
-//        targetWarehouseId = Objects.requireNonNullElse(warehouseId, 1);
         if (warehouseId == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Warehouse id must not be null");
         }
-
         // 2. Cari warehouse di DB
         WarehouseModel warehouse = warehouseRepo.findById(warehouseId).orElse(null);
         if  (warehouse == null) {
@@ -125,14 +120,15 @@ public class ItemService {
             );
         }
 
-        int targetWarehouseId;
-        targetWarehouseId = Objects.requireNonNullElse(warehouseId, 1);
+        if (warehouseId == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Warehouse id must not be null");
+        }
 
-        WarehouseModel warehouse = warehouseRepo.findById(targetWarehouseId).orElse(null);
+        WarehouseModel warehouse = warehouseRepo.findById(warehouseId).orElse(null);
         if (warehouse == null) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    "Warehouse not found with id " + targetWarehouseId
+                    "Warehouse not found with id " + warehouseId
             );
         }
 
