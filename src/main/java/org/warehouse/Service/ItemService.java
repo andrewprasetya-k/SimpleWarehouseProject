@@ -31,7 +31,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.UUID;
-import java.time.Instant;
 
 @Service
 public class ItemService {
@@ -71,6 +70,7 @@ public class ItemService {
         return new ItemDetailResponse(item.getId(), item.getItemName(), item.getPrice(), item.getQuantity(), warehouse);
     }
 
+    @Transactional
     @Caching(evict = {
             @CacheEvict(value = "items", allEntries = true),
             @CacheEvict(value = "item-pages", allEntries = true)
@@ -83,7 +83,6 @@ public class ItemService {
         if (warehouseId == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Warehouse id must not be null");
         }
-
 
         // 2. Cari warehouse di DB
         WarehouseModel warehouse = warehouseRepo.findById(warehouseId).orElse(null);
@@ -98,15 +97,12 @@ public class ItemService {
         return repo.save(itemModel);
     }
 
+    @Transactional
     @Caching(evict = {
             @CacheEvict(value = "items", allEntries = true),
             @CacheEvict(value = "item-pages", allEntries = true)
     })
     public ItemModel update(Integer id, ItemModel itemModel, Integer warehouseId) {
-        if(!repo.existsById(id)){
-            return null;
-        }
-
         int targetWarehouseId;
         targetWarehouseId = Objects.requireNonNullElse(warehouseId, 1);
 
@@ -123,6 +119,7 @@ public class ItemService {
         return repo.save(itemModel);
     }
 
+    @Transactional
     @Caching(evict = {
             @CacheEvict(value = "items", allEntries = true),
             @CacheEvict(value = "item-pages", allEntries = true)
