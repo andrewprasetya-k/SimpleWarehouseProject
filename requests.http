@@ -40,7 +40,8 @@ Content-Type: application/json
   "itemName": "Kursi",
   "quantity": 3,
   "price": 75000.0,
-  "weight": 4.2
+  "weight": 4.2,
+  "warehouseId": 1
 }
 
 ### Create digital item
@@ -51,7 +52,8 @@ Content-Type: application/json
   "itemName": "Ebook Baru",
   "quantity": 7,
   "price": 30000.0,
-  "isLicensed": false
+  "isLicensed": false,
+  "warehouseId": 1
 }
 
 ### Update physical item
@@ -62,7 +64,8 @@ Content-Type: application/json
   "itemName": "Kursi Kantor",
   "quantity": 5,
   "price": 80000.0,
-  "weight": 4.5
+  "weight": 4.5,
+  "warehouseId": 1
 }
 
 ### Update digital item
@@ -73,7 +76,8 @@ Content-Type: application/json
   "itemName": "Ebook Revisi",
   "quantity": 10,
   "price": 35000.0,
-  "isLicensed": true
+  "isLicensed": true,
+  "warehouseId": 1
 }
 
 ### Bulk move items to a warehouse (body: array of item id) - skenario SUKSES
