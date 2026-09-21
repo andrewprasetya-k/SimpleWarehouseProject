@@ -86,7 +86,7 @@ public class ItemController {
 
     //put
     @PutMapping("/physical/{id}")
-    public ResponseEntity<PhysicalItemModel> updatePhysicalItem(
+    public ResponseEntity<PhysicalItemResponse> updatePhysicalItem(
             @PathVariable int id,
             @Valid @RequestBody PhysicalItemRequest request
     ) {
@@ -101,11 +101,12 @@ public class ItemController {
         if (updated == null){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok((PhysicalItemModel) updated);
+        PhysicalItemModel result = (PhysicalItemModel) updated;
+        return ResponseEntity.ok(new PhysicalItemResponse(result.getId(), result.getItemName(), result.getQuantity(), result.getPrice(), result.getWeight()));
     }
 
     @PutMapping("/digital/{id}")
-    public ResponseEntity<DigitalItemModel> updateDigitalItem(
+    public ResponseEntity<DigitalItemResponse> updateDigitalItem(
             @PathVariable int id,
             @Valid @RequestBody DigitalItemRequest request
     ) {
@@ -120,7 +121,8 @@ public class ItemController {
         if (updated == null){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok((DigitalItemModel) updated);
+        DigitalItemModel result = (DigitalItemModel) updated;
+        return ResponseEntity.ok(new DigitalItemResponse(result.getId(), result.getItemName(), result.getQuantity(), result.getPrice(), result.isLisenced()));
     }
 
     @PutMapping("/add-quantity/{id}")
