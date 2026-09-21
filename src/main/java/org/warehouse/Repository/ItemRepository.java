@@ -11,6 +11,7 @@ import org.warehouse.Model.PhysicalItemModel;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.Lock;
 
+import java.util.Collection;
 import java.util.Optional;
 
 @Repository
@@ -19,6 +20,7 @@ public interface ItemRepository extends JpaRepository<ItemModel, Integer> {
     //JPA
     Page<ItemModel> findByItemNameStartingWith(String itemName, Pageable pageable);
     Page<ItemModel> findByQuantityGreaterThan(int quantity, Pageable pageable);
+    boolean existsByIdInAndWarehouseId(Collection<Integer> ids, Integer warehouseId);
 
     //JPQL
     @Query("select i from ItemModel i where i.warehouse.id=:warehouseId")

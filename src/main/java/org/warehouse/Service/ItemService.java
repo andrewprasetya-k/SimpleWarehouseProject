@@ -48,7 +48,7 @@ public class ItemService {
         this.eventPublisher = eventPublisher;
     }
 
-    @Cacheable(value="item-pages", key="#pageable.pageNumber + '-' + #pageable.pageSize")
+    @Cacheable(value="item-pages", key="#pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()")
     public ItemPagedResponse findAll(Pageable pageable) {
         Page<ItemModel> paged = repo.findAll(pageable);
         log.info("findAll called");
@@ -261,6 +261,18 @@ public class ItemService {
         }
 
         Integer sourceWarehouseId = sourceWarehouseIds.iterator().next();
+
+        boolean itemInWarehouse= repo.existsByIdInAndWarehouseId(itemIds, warehouseId);
+
+        if (itemInWarehouse) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Item already in warehouse " + warehouseId + ": " + itemIds
+            );
+        }
+
+        // Move items
+        items.forEach(item -> item.setWarehouse(warehouse));
         eventPublisher.publishEvent(
                 new ItemsMovedEvent(
                         UUID.randomUUID(),
@@ -269,28 +281,6 @@ public class ItemService {
                         List.copyOf(itemIds)
                 )
         );
-
-        // cek item sudah di warehouse
-        Set<Integer> existingIds = repo.findByWarehouseId(warehouseId, Pageable.unpaged())
-                .getContent().stream()
-                .map(ItemModel::getId)
-                .collect(Collectors.toSet());
-
-        List<Integer> overlappingIds = itemIds.stream()
-                .filter(existingIds::contains)
-                .distinct()
-                .toList();
-
-        if (!overlappingIds.isEmpty()) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Item already in warehouse " + warehouseId + ": " + overlappingIds
-            );
-        }
-
-        // Move items
-        items.forEach(item -> item.setWarehouse(warehouse));
-
         repo.saveAll(items);
     }
 
