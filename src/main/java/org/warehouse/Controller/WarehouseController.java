@@ -40,6 +40,11 @@ public class WarehouseController {
         return itemService.findByWarehouseId(id, pageable);
     }
 
+    @GetMapping("{id}/summary")
+    public WarehouseSummary getWarehouseSummary(@PathVariable int id) {
+        return service.getWarehousesSummary(id);
+    }
+
     @PostMapping
     public WarehouseResponse create(@Valid @RequestBody WarehouseRequest request) {
         WarehouseModel entity = new WarehouseModel(null, request.warehouseName(), request.address(), null);
