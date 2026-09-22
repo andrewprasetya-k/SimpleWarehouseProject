@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.warehouse.Dto.WarehousePagedResponse;
 import org.warehouse.Dto.WarehouseResponse;
+import org.warehouse.Dto.WarehouseSummary;
 import org.warehouse.Model.WarehouseModel;
 import org.warehouse.Repository.ItemRepository;
 import org.warehouse.Repository.WarehouseRepository;
@@ -79,6 +80,13 @@ public class WarehouseService {
         }
         if (repo.existsById(id)) {
             repo.deleteById(id);
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Warehouse not found");
+    }
+
+    public WarehouseSummary getWarehousesSummary(Integer id) {
+        if(repo.existsById(id)) {
+            return repo.getWarehouseSummary(id);
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Warehouse not found");
     }
