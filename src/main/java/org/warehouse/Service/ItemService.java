@@ -40,6 +40,7 @@ public class ItemService {
     private final ItemRepository repo;
     private final WarehouseRepository warehouseRepo;
     private final ApplicationEventPublisher eventPublisher;
+    private final StockMovementService stockMovementService;
     private final int lowStockThreshold;
     private final int maxMoveItems;
 
@@ -47,12 +48,14 @@ public class ItemService {
             ItemRepository repo,
             WarehouseRepository warehouseRepo,
             ApplicationEventPublisher eventPublisher,
+            StockMovementService stockMovementService,
             @Value("${app.stock.low-threshold:5}") int lowStockThreshold,
             @Value("${app.move.max-items:100}") int maxMoveItems
     ) {
         this.repo = repo;
         this.warehouseRepo = warehouseRepo;
         this.eventPublisher = eventPublisher;
+        this.stockMovementService = stockMovementService;
         this.lowStockThreshold = lowStockThreshold;
         this.maxMoveItems = maxMoveItems;
     }
@@ -226,9 +229,13 @@ public class ItemService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantity must be between 0 and 100");
         }
         ItemModel item = repo.findByIdForQtyUpdate(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found " + id));
-        item.setQuantity(item.getQuantity() + quantity);
+        int previousQuantity = item.getQuantity();
+        item.setQuantity(previousQuantity + quantity);
 
-        return repo.save(item);
+        ItemModel savedItem = repo.save(item);
+        Integer warehouseId = savedItem.getWarehouse() != null ? savedItem.getWarehouse().getId() : null;
+        stockMovementService.record(savedItem.getId(), warehouseId, "ADD_QUANTITY", quantity, previousQuantity, savedItem.getQuantity());
+        return savedItem;
     }
 
     @Transactional
@@ -254,8 +261,9 @@ public class ItemService {
         item.setQuantity(previousQuantity - quantity);
 
         ItemModel savedItem = repo.save(item);
+        Integer warehouseId = savedItem.getWarehouse() != null ? savedItem.getWarehouse().getId() : null;
+        stockMovementService.record(savedItem.getId(), warehouseId, "DECREASE_QUANTITY", -quantity, previousQuantity, savedItem.getQuantity());
         if (previousQuantity >= lowStockThreshold && savedItem.getQuantity() < lowStockThreshold) {
-            Integer warehouseId = savedItem.getWarehouse() != null ? savedItem.getWarehouse().getId() : null;
             eventPublisher.publishEvent(new LowStockEvent(savedItem.getId(),savedItem.getItemName(), savedItem.getQuantity(), warehouseId));
         }
         return savedItem;
@@ -340,6 +348,9 @@ public class ItemService {
                 )
         );
         repo.saveAll(items);
+        for (ItemModel movedItem : items) {
+            stockMovementService.record(movedItem.getId(), warehouseId, "MOVE", 0, movedItem.getQuantity(), movedItem.getQuantity());
+        }
     }
 
 }

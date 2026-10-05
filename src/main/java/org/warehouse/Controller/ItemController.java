@@ -11,6 +11,7 @@ import org.warehouse.Model.ItemModel;
 import org.warehouse.Model.PhysicalItemModel;
 import org.warehouse.Service.ItemService;
 import org.warehouse.Service.ItemHistoryService;
+import org.warehouse.Service.StockMovementService;
 
 import java.util.List;
 
@@ -19,10 +20,12 @@ import java.util.List;
 public class ItemController {
     private final ItemService service;
     private final ItemHistoryService itemHistoryService;
+    private final StockMovementService stockMovementService;
 
-    public ItemController(ItemService service,  ItemHistoryService itemHistoryService) {
+    public ItemController(ItemService service,  ItemHistoryService itemHistoryService, StockMovementService stockMovementService) {
         this.service = service;
         this.itemHistoryService = itemHistoryService;
+        this.stockMovementService = stockMovementService;
     }
 
     //get
@@ -53,6 +56,13 @@ public class ItemController {
     @GetMapping("/physical/search")
     public PhysicalItemPagedResponse findPhysicalItemsByItemName(@RequestParam String name, Pageable pageable) {
         return service.findPhysicalItemsByItemName(name, pageable);
+    }
+
+    @GetMapping("/{id}/movements")
+    public List<StockMovementResponse> getStockMovements(@PathVariable int id) {
+        return stockMovementService.findByItemId(id).stream()
+                .map(m -> new StockMovementResponse(m.getId(), m.getItemId(), m.getWarehouseId(), m.getMovementType(), m.getQuantityChange(), m.getPreviousQuantity(), m.getCurrentQuantity(), m.getCreatedAt()))
+                .toList();
     }
 
     //fetch lgsg dari kafka
