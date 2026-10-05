@@ -70,7 +70,7 @@ public class ItemService {
 
     @Cacheable(value="items", key="#id")
     public ItemDetailResponse findById(Integer id) {
-        ItemModel item = repo.findByWarehouseById(id).orElse(null);
+        ItemModel item = repo.findWithWarehouseById(id).orElse(null);
         log.info("findById({}) called", id);
         if (item == null) {
             return null;
