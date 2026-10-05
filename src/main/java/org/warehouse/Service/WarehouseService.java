@@ -86,13 +86,9 @@ public class WarehouseService {
     }
 
     public WarehouseSummary getWarehouseSummary(Integer id) {
-        if (!repo.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Warehouse not found");
-        }
         WarehouseSummary summary = repo.getWarehouseSummary(id);
         if (summary == null) {
-            WarehouseModel warehouse = repo.findById(id).orElseThrow();
-            return new WarehouseSummary(id, warehouse.getWarehouseName(), 0L, 0.0);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Warehouse not found");
         }
         return summary;
     }
