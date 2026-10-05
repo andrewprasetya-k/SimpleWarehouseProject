@@ -42,7 +42,7 @@ public class WarehouseController {
 
     @GetMapping("{id}/summary")
     public WarehouseSummary getWarehouseSummary(@PathVariable int id) {
-        return service.getWarehousesSummary(id);
+        return service.getWarehouseSummary(id);
     }
 
     @PostMapping
