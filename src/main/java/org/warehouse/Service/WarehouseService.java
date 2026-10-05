@@ -80,6 +80,7 @@ public class WarehouseService {
         }
         if (repo.existsById(id)) {
             repo.deleteById(id);
+            return true;
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Warehouse not found");
     }

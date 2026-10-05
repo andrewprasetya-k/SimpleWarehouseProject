@@ -68,6 +68,6 @@ public class WarehouseController {
         if (isDeleted) {
             return ResponseEntity.ok(true);
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.notFound().build();
     }
 }
