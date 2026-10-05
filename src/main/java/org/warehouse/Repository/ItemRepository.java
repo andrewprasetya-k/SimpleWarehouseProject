@@ -25,7 +25,7 @@ public interface ItemRepository extends JpaRepository<ItemModel, Integer> {
     boolean existsByWarehouseId(Integer warehouseId);
 
     @EntityGraph(attributePaths = "warehouse")
-    Optional<ItemModel> findWithWarehouseById(Integer id);
+    Optional<ItemModel> findByWarehouseById(Integer id);
 
     //JPQL
     @Query("select i from ItemModel i where i.warehouse.id=:warehouseId")

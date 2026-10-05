@@ -67,7 +67,7 @@ public class ItemService {
 
     @Cacheable(value="items", key="#id")
     public ItemDetailResponse findById(Integer id) {
-        ItemModel item = repo.findWithWarehouseById(id).orElse(null);
+        ItemModel item = repo.findByWarehouseById(id).orElse(null);
         log.info("findById({}) called", id);
         if (item == null) {
             return null;
@@ -94,16 +94,16 @@ public class ItemService {
         if (warehouseId == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Warehouse id must not be null");
         }
-        // 2. Cari warehouse di DB
+        // cari warehouse di DB
         WarehouseModel warehouse = warehouseRepo.findById(warehouseId).orElse(null);
         if  (warehouse == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Warehouse not found with id " + warehouseId);
         }
 
-        // 3. Assign warehouse ke item
+        // assign warehouse ke item
         itemModel.setWarehouse(warehouse);
 
-        // 4. Save item
+        // save item
         return repo.save(itemModel);
     }
 
