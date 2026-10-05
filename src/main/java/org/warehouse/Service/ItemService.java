@@ -180,6 +180,9 @@ public class ItemService {
 
     @Cacheable(value="item-warehouse-pages", key="#warehouseId + '-' + #pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()")
     public ItemPagedResponse findByWarehouseId(Integer warehouseId, Pageable pageable) {
+        if (!warehouseRepo.existsById(warehouseId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Warehouse not found " + warehouseId);
+        }
         Page<ItemModel> paged = repo.findByWarehouseId(warehouseId, pageable);
         List<ItemResponse> content = paged.getContent().stream()
                 .map(i -> new ItemResponse(i.getId(), i.getItemName(), i.getPrice(), i.getQuantity()))
