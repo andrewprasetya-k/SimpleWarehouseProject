@@ -22,7 +22,7 @@ public class NotificationController {
     }
 
     @PostMapping("/items-moved")
-    public ResponseEntity<Void> receivedMovedNotification(@RequestBody ItemsMovedKafkaMessage message) {
+    public ResponseEntity<Void> receiveMovedNotification(@RequestBody ItemsMovedKafkaMessage message) {
         logger.info("Notification Received");
         return ResponseEntity.ok().build();
     }
