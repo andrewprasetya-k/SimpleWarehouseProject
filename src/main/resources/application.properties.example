@@ -40,6 +40,8 @@ app.kafka.topics.items-moved=warehouse.items-moved
 app.kafka.topics.low-stock-alerts=warehouse.low-stock-alerts
 app.kafka.consumer.groups.items-moved=warehouse-items-moved-group
 app.kafka.consumer.groups.low-stock=warehouse-low-stock-group
+app.stock.low-threshold=5
+app.move.max-items=100
 
 logging.level.root=INFO
 logging.level.org.warehouse=INFO

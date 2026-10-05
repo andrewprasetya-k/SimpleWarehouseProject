@@ -3,6 +3,7 @@ package org.warehouse.Service;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.warehouse.Kafka.Dto.ItemsMovedKafkaMessage;
+import org.warehouse.Kafka.Dto.LowStockKafkaMessage;
 import reactor.core.publisher.Mono;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,16 @@ public class NotificationService {
                 .retrieve()
                 .toBodilessEntity()
                 .retryWhen(Retry.backoff(3, Duration.ofSeconds(3)))
+                .then();
+    }
+
+    public Mono<Void> notifyLowStock(LowStockKafkaMessage message) {
+        return webClient.post()
+                .uri("/notification/low-stock")
+                .bodyValue(message)
+                .retrieve()
+                .toBodilessEntity()
+                .retryWhen(Retry.backoff(1, Duration.ofSeconds(2)))
                 .then();
     }
 
