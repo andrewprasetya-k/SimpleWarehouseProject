@@ -18,7 +18,7 @@ public class DigitalItemModel extends ItemModel{
         this.isLicensed = isLicensed;
     }
 
-    public Boolean isLisenced() {
+    public Boolean isLicensed() {
         return isLicensed;
     }
 

@@ -81,7 +81,7 @@ public class ItemController {
         // Pass warehouseId ke method save existing
         DigitalItemModel saved=(DigitalItemModel) service.save(entity, request.warehouseId());
 
-        return new DigitalItemResponse(saved.getId(),saved.getItemName(), saved.getQuantity(),saved.getPrice(),saved.isLisenced());
+        return new DigitalItemResponse(saved.getId(),saved.getItemName(), saved.getQuantity(),saved.getPrice(),saved.isLicensed());
     }
 
     //put
@@ -122,7 +122,7 @@ public class ItemController {
             return ResponseEntity.notFound().build();
         }
         DigitalItemModel result = (DigitalItemModel) updated;
-        return ResponseEntity.ok(new DigitalItemResponse(result.getId(), result.getItemName(), result.getQuantity(), result.getPrice(), result.isLisenced()));
+        return ResponseEntity.ok(new DigitalItemResponse(result.getId(), result.getItemName(), result.getQuantity(), result.getPrice(), result.isLicensed()));
     }
 
     @PutMapping("/add-quantity/{id}")
@@ -139,7 +139,7 @@ public class ItemController {
 
     //delete
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deletePhysicalItem(@PathVariable int id){
+    public ResponseEntity<Boolean> deleteItem(@PathVariable int id){
         boolean isDeleted=service.delete(id);
         if (isDeleted){
             return ResponseEntity.ok(true);
