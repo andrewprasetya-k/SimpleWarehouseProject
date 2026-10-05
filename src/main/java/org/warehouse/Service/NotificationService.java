@@ -28,7 +28,7 @@ public class NotificationService {
                 .bodyValue(message)
                 .retrieve()
                 .toBodilessEntity()
-                .retryWhen(Retry.backoff(3, Duration.ofSeconds(3)))
+                .retryWhen(Retry.backoff(1, Duration.ofSeconds(2)))
                 .then();
     }
 
