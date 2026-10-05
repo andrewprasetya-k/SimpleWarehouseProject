@@ -11,8 +11,5 @@ import org.springframework.kafka.annotation.EnableKafka;
 public class Main {
     public static void main(String[] args) {
         ApplicationContext ctx = SpringApplication.run(Main.class, args);
-//        for(String beanName : ctx.getBeanDefinitionNames()) {
-//            System.out.println(ctx.getBean(beanName));
-//        }
     }
 }

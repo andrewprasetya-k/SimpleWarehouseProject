@@ -21,8 +21,6 @@ public class NotificationService {
     }
 
     public Mono<Void> notifyItemsMoved(ItemsMovedKafkaMessage message) {
-//        log.info("NOTIFICATION_ITEMS_MOVED eventId={} sourceWarehouseId={} targetWarehouseId={} itemIds={} status={}",
-//                message.eventId(), message.sourceWarehouseId(), message.warehouseId(), message.itemIds(), message.status());
         return webClient.post()
                 .uri("/notification/items-moved")
                 .bodyValue(message)

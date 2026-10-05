@@ -23,7 +23,6 @@ public class ItemsMovedListener {
         //tempat untuk tambahkan push notification/email, dll
     }
 
-    //kayaknya ini baru
     @TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
     public void onAfterRollback(ItemsMovedEvent event) {
         log.warn("ITEMS_MOVED_AFTER_ROLLBACK eventId={} itemIds={} sourceWarehouseId={} warehouseId={}",
