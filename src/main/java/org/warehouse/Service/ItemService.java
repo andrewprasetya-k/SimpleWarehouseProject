@@ -6,6 +6,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -39,12 +40,21 @@ public class ItemService {
     private final ItemRepository repo;
     private final WarehouseRepository warehouseRepo;
     private final ApplicationEventPublisher eventPublisher;
+    private final int lowStockThreshold;
+    private final int maxMoveItems;
 
-
-    public ItemService(ItemRepository repo, WarehouseRepository warehouseRepo,  ApplicationEventPublisher eventPublisher) {
+    public ItemService(
+            ItemRepository repo,
+            WarehouseRepository warehouseRepo,
+            ApplicationEventPublisher eventPublisher,
+            @Value("${app.stock.low-threshold:5}") int lowStockThreshold,
+            @Value("${app.move.max-items:100}") int maxMoveItems
+    ) {
         this.repo = repo;
         this.warehouseRepo = warehouseRepo;
         this.eventPublisher = eventPublisher;
+        this.lowStockThreshold = lowStockThreshold;
+        this.maxMoveItems = maxMoveItems;
     }
 
     @Cacheable(value="item-pages", key="#pageable.pageNumber + '-' + #pageable.pageSize + '-' + #pageable.sort.toString()")
@@ -234,13 +244,14 @@ public class ItemService {
         }
         ItemModel item = repo.findByIdForQtyUpdate(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found " + id));
-        if (item.getQuantity() - quantity < 0 ) {
+        int previousQuantity = item.getQuantity();
+        if (previousQuantity - quantity < 0 ) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Insufficient stock for item " + id);
         }
-        item.setQuantity(item.getQuantity() - quantity);
+        item.setQuantity(previousQuantity - quantity);
 
         ItemModel savedItem = repo.save(item);
-        if(savedItem.getQuantity() < 5){
+        if (previousQuantity >= lowStockThreshold && savedItem.getQuantity() < lowStockThreshold) {
             Integer warehouseId = savedItem.getWarehouse() != null ? savedItem.getWarehouse().getId() : null;
             eventPublisher.publishEvent(new LowStockEvent(savedItem.getId(),savedItem.getItemName(), savedItem.getQuantity(), warehouseId));
         }
@@ -263,6 +274,10 @@ public class ItemService {
                     HttpStatus.BAD_REQUEST,
                     "warehouseId and at least one non-null itemId are required"
             );
+        }
+
+        if (itemIds.size() > maxMoveItems) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot move more than " + maxMoveItems + " items at once");
         }
 
         WarehouseModel warehouse = warehouseRepo.findById(warehouseId)
