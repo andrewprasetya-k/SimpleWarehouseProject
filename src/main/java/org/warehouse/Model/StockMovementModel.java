@@ -63,7 +63,7 @@ public class StockMovementModel {
     public MovementType getMovementType() { return movementType; }
     public void setMovementType(MovementType movementType) { this.movementType = movementType; }
     public Integer getQuantityChange() { return quantityChange; }
-    public void setQuantityDelta(Integer quantityChange) { this.quantityChange = quantityChange; }
+    public void setQuantityChange(Integer quantityChange) { this.quantityChange = quantityChange; }
     public Integer getPreviousQuantity() { return previousQuantity; }
     public void setPreviousQuantity(Integer previousQuantity) { this.previousQuantity = previousQuantity; }
     public Integer getCurrentQuantity() { return currentQuantity; }
