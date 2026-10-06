@@ -28,4 +28,10 @@ public class StockMovementService {
         List<StockMovementResponse> content = paged.getContent().stream().map(i -> new StockMovementResponse(i.getId(), i.getItemId(), i.getWarehouseId(), i.getMovementType(), i.getQuantityChange(), i.getPreviousQuantity(), i.getCurrentQuantity(), i.getCreatedAt())).toList();
         return new StockMovementPagedResponse(content, paged.getNumber(), paged.getSize(), paged.getTotalElements(), paged.getTotalPages());
     }
+
+    public StockMovementPagedResponse findAllMovements(Pageable pageable) {
+        Page<StockMovementModel> paged = repo.findAllByOrderByCreatedAtDesc(pageable);
+        List<StockMovementResponse> content = paged.getContent().stream().map(i -> new StockMovementResponse(i.getId(), i.getItemId(), i.getWarehouseId(), i.getMovementType(), i.getQuantityChange(), i.getPreviousQuantity(), i.getCurrentQuantity(), i.getCreatedAt())).toList();
+        return new StockMovementPagedResponse(content, paged.getNumber(), paged.getSize(), paged.getTotalElements(), paged.getTotalPages());
+    }
 }
