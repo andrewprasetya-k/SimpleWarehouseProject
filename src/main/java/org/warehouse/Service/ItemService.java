@@ -19,6 +19,7 @@ import org.warehouse.Dto.ItemPagedResponse;
 import org.warehouse.Dto.PhysicalItemPagedResponse;
 import org.warehouse.Dto.PhysicalItemResponse;
 import org.warehouse.Dto.WarehouseResponse;
+import org.warehouse.Enum.MovementType;
 import org.warehouse.Event.ItemsMovedEvent;
 import org.warehouse.Event.LowStockEvent;
 import org.warehouse.Model.ItemModel;
@@ -234,7 +235,7 @@ public class ItemService {
 
         ItemModel savedItem = repo.save(item);
         Integer warehouseId = savedItem.getWarehouse() != null ? savedItem.getWarehouse().getId() : null;
-        stockMovementService.record(savedItem.getId(), warehouseId, "ADD_QUANTITY", quantity, previousQuantity, savedItem.getQuantity());
+        stockMovementService.record(savedItem.getId(), warehouseId, MovementType.ADD_QUANTITY, quantity, previousQuantity, savedItem.getQuantity());
         return savedItem;
     }
 
@@ -262,7 +263,7 @@ public class ItemService {
 
         ItemModel savedItem = repo.save(item);
         Integer warehouseId = savedItem.getWarehouse() != null ? savedItem.getWarehouse().getId() : null;
-        stockMovementService.record(savedItem.getId(), warehouseId, "DECREASE_QUANTITY", -quantity, previousQuantity, savedItem.getQuantity());
+        stockMovementService.record(savedItem.getId(), warehouseId, MovementType.DECREASE_QUANTITY, -quantity, previousQuantity, savedItem.getQuantity());
         if (previousQuantity >= lowStockThreshold && savedItem.getQuantity() < lowStockThreshold) {
             eventPublisher.publishEvent(new LowStockEvent(savedItem.getId(),savedItem.getItemName(), savedItem.getQuantity(), warehouseId));
         }
@@ -349,7 +350,7 @@ public class ItemService {
         );
         repo.saveAll(items);
         for (ItemModel movedItem : items) {
-            stockMovementService.record(movedItem.getId(), warehouseId, "MOVE", 0, movedItem.getQuantity(), movedItem.getQuantity());
+            stockMovementService.record(movedItem.getId(), warehouseId, MovementType.MOVE, 0, movedItem.getQuantity(), movedItem.getQuantity());
         }
     }
 

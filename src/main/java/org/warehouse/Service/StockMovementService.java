@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.warehouse.Dto.StockMovementPagedResponse;
 import org.springframework.data.domain.Pageable;
 import org.warehouse.Dto.StockMovementResponse;
+import org.warehouse.Enum.MovementType;
 import org.warehouse.Model.StockMovementModel;
 import org.warehouse.Repository.StockMovementRepository;
 
@@ -19,7 +20,7 @@ public class StockMovementService {
         this.repo = repo;
     }
 
-    public StockMovementModel record(Integer itemId, Integer warehouseId, String movementType, Integer quantityChange, Integer previousQuantity, Integer currentQuantity) {
+    public StockMovementModel record(Integer itemId, Integer warehouseId, MovementType movementType, Integer quantityChange, Integer previousQuantity, Integer currentQuantity) {
         StockMovementModel movement = new StockMovementModel(null, itemId, warehouseId, movementType, quantityChange, previousQuantity, currentQuantity, null);
         return repo.save(movement);
     }

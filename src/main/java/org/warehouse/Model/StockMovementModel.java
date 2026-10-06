@@ -1,6 +1,7 @@
 package org.warehouse.Model;
 
 import jakarta.persistence.*;
+import org.warehouse.Enum.MovementType;
 
 import java.time.Instant;
 
@@ -17,8 +18,9 @@ public class StockMovementModel {
     @Column(name = "warehouse_id")
     private Integer warehouseId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "movement_type", nullable = false)
-    private String movementType;
+    private MovementType movementType;
 
     @Column(name = "quantity_change", nullable = false)
     private Integer quantityChange;
@@ -34,7 +36,7 @@ public class StockMovementModel {
 
     protected StockMovementModel() {}
 
-    public StockMovementModel(Integer id, Integer itemId, Integer warehouseId, String movementType, Integer quantityChange, Integer previousQuantity, Integer currentQuantity, Instant createdAt) {
+    public StockMovementModel(Integer id, Integer itemId, Integer warehouseId, MovementType movementType, Integer quantityChange, Integer previousQuantity, Integer currentQuantity, Instant createdAt) {
         this.id = id;
         this.itemId = itemId;
         this.warehouseId = warehouseId;
@@ -58,8 +60,8 @@ public class StockMovementModel {
     public void setItemId(Integer itemId) { this.itemId = itemId; }
     public Integer getWarehouseId() { return warehouseId; }
     public void setWarehouseId(Integer warehouseId) { this.warehouseId = warehouseId; }
-    public String getMovementType() { return movementType; }
-    public void setMovementType(String movementType) { this.movementType = movementType; }
+    public MovementType getMovementType() { return movementType; }
+    public void setMovementType(MovementType movementType) { this.movementType = movementType; }
     public Integer getQuantityChange() { return quantityChange; }
     public void setQuantityDelta(Integer quantityChange) { this.quantityChange = quantityChange; }
     public Integer getPreviousQuantity() { return previousQuantity; }
