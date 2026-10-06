@@ -59,10 +59,9 @@ public class ItemController {
     }
 
     @GetMapping("/{id}/movements")
-    public List<StockMovementResponse> getStockMovements(@PathVariable int id) {
-        return stockMovementService.findByItemId(id).stream()
-                .map(m -> new StockMovementResponse(m.getId(), m.getItemId(), m.getWarehouseId(), m.getMovementType(), m.getQuantityChange(), m.getPreviousQuantity(), m.getCurrentQuantity(), m.getCreatedAt()))
-                .toList();
+    public StockMovementPagedResponse getStockMovements(@PathVariable int id, Pageable pageable
+    ) {
+        return stockMovementService.findByItemId(id,pageable);
     }
 
     //fetch lgsg dari kafka

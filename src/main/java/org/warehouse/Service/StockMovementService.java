@@ -1,6 +1,10 @@
 package org.warehouse.Service;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.warehouse.Dto.StockMovementPagedResponse;
+import org.springframework.data.domain.Pageable;
+import org.warehouse.Dto.StockMovementResponse;
 import org.warehouse.Model.StockMovementModel;
 import org.warehouse.Repository.StockMovementRepository;
 
@@ -19,7 +23,9 @@ public class StockMovementService {
         return repo.save(movement);
     }
 
-    public List<StockMovementModel> findByItemId(Integer itemId) {
-        return repo.findByItemIdOrderByCreatedAtDesc(itemId);
+    public StockMovementPagedResponse findByItemId(Integer itemId, Pageable pageable) {
+        Page<StockMovementModel> paged = repo.findByItemIdOrderByCreatedAtDesc(itemId, pageable);
+        List<StockMovementResponse> content = paged.getContent().stream().map(i -> new StockMovementResponse(i.getId(), i.getItemId(), i.getWarehouseId(), i.getMovementType(), i.getQuantityChange(), i.getPreviousQuantity(), i.getCurrentQuantity(), i.getCreatedAt())).toList();
+        return new StockMovementPagedResponse(content, paged.getNumber(), paged.getSize(), paged.getTotalElements(), paged.getTotalPages());
     }
 }
