@@ -11,3 +11,8 @@ CREATE TABLE warehouse.stock_movement (
 
 CREATE INDEX idx_stock_movement_item_id ON warehouse.stock_movement(item_id);
 CREATE INDEX idx_stock_movement_warehouse_id ON warehouse.stock_movement(warehouse_id);
+CREATE INDEX idx_stock_movement_item_id_created_at
+    ON warehouse.stock_movement(item_id, created_at DESC);
+
+CREATE INDEX idx_stock_movement_created_at
+    ON warehouse.stock_movement(created_at DESC);
