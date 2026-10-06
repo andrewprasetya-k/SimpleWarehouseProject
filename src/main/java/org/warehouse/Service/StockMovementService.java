@@ -8,6 +8,7 @@ import org.warehouse.Dto.StockMovementResponse;
 import org.warehouse.Model.StockMovementModel;
 import org.warehouse.Repository.StockMovementRepository;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -24,14 +25,41 @@ public class StockMovementService {
     }
 
     public StockMovementPagedResponse findByItemId(Integer itemId, Pageable pageable) {
-        Page<StockMovementModel> paged = repo.findByItemIdOrderByCreatedAtDesc(itemId, pageable);
+        return findByItemId(itemId, null, null, pageable);
+    }
+
+    public StockMovementPagedResponse findAllMovements(Instant from, Instant to, Pageable pageable) {
+        Page<StockMovementModel> paged;
+        if (from == null && to == null) {
+            paged = repo.findAllByOrderByCreatedAtDesc(pageable);
+        } else if (from == null) {
+            paged = repo.findAllByCreatedAtLessThanEqual(to, pageable);
+        } else if (to == null) {
+            paged = repo.findAllByCreatedAtGreaterThanEqual(from, pageable);
+        } else {
+            paged = repo.findAllByCreatedAtBetween(from, to, pageable);
+        }
         List<StockMovementResponse> content = paged.getContent().stream().map(i -> new StockMovementResponse(i.getId(), i.getItemId(), i.getWarehouseId(), i.getMovementType(), i.getQuantityChange(), i.getPreviousQuantity(), i.getCurrentQuantity(), i.getCreatedAt())).toList();
         return new StockMovementPagedResponse(content, paged.getNumber(), paged.getSize(), paged.getTotalElements(), paged.getTotalPages());
     }
 
     public StockMovementPagedResponse findAllMovements(Pageable pageable) {
-        Page<StockMovementModel> paged = repo.findAllByOrderByCreatedAtDesc(pageable);
+        return findAllMovements(null, null, pageable);
+    }
+
+    public StockMovementPagedResponse findByItemId(Integer itemId, Instant from, Instant to, Pageable pageable) {
+        Page<StockMovementModel> paged;
+        if (from == null && to == null) {
+            paged = repo.findByItemIdOrderByCreatedAtDesc(itemId, pageable);
+        } else if (from == null) {
+            paged = repo.findByItemIdAndCreatedAtLessThanEqual(itemId, to, pageable);
+        } else if (to == null) {
+            paged = repo.findByItemIdAndCreatedAtGreaterThanEqual(itemId, from, pageable);
+        } else {
+            paged = repo.findByItemIdAndCreatedAtBetween(itemId, from, to, pageable);
+        }
         List<StockMovementResponse> content = paged.getContent().stream().map(i -> new StockMovementResponse(i.getId(), i.getItemId(), i.getWarehouseId(), i.getMovementType(), i.getQuantityChange(), i.getPreviousQuantity(), i.getCurrentQuantity(), i.getCreatedAt())).toList();
         return new StockMovementPagedResponse(content, paged.getNumber(), paged.getSize(), paged.getTotalElements(), paged.getTotalPages());
     }
+
 }

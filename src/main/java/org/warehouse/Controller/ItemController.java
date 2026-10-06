@@ -13,6 +13,7 @@ import org.warehouse.Service.ItemService;
 import org.warehouse.Service.ItemHistoryService;
 import org.warehouse.Service.StockMovementService;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -59,9 +60,13 @@ public class ItemController {
     }
 
     @GetMapping("/{id}/movements")
-    public StockMovementPagedResponse getStockMovements(@PathVariable int id, Pageable pageable
+    public StockMovementPagedResponse getStockMovements(
+            @PathVariable int id,
+            @RequestParam(required = false) Instant from,
+            @RequestParam(required = false) Instant to,
+            Pageable pageable
     ) {
-        return stockMovementService.findByItemId(id,pageable);
+        return stockMovementService.findByItemId(id, from, to, pageable);
     }
 
     //fetch lgsg dari kafka
