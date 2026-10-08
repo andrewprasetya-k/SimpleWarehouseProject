@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.warehouse.Model.StockMovementModel;
+import org.warehouse.Enum.MovementType;
 
 import java.time.Instant;
 
@@ -30,4 +31,7 @@ public interface StockMovementRepository extends JpaRepository<StockMovementMode
 
     @Query("SELECT m FROM StockMovementModel m WHERE m.itemId = :itemId AND m.createdAt BETWEEN :from AND :to ORDER BY m.createdAt DESC")
     Page<StockMovementModel> findByItemIdAndCreatedAtBetween(@Param("itemId") Integer itemId, @Param("from") Instant from, @Param("to") Instant to, Pageable pageable);
+
+    @Query("SELECT m FROM StockMovementModel m WHERE m.createdAt >= :from AND m.createdAt <= :to AND (:itemId IS NULL OR m.itemId = :itemId) AND (:warehouseId IS NULL OR m.warehouseId = :warehouseId) AND (:movementType IS NULL OR m.movementType = :movementType) ORDER BY m.createdAt DESC")
+    Page<StockMovementModel> searchByFilters(@Param("from") Instant from, @Param("to") Instant to, @Param("itemId") Integer itemId, @Param("warehouseId") Integer warehouseId, @Param("movementType") MovementType movementType, Pageable pageable);
 }

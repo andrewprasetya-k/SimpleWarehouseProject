@@ -48,6 +48,14 @@ public class StockMovementService {
         return findAllMovements(null, null, pageable);
     }
 
+    public StockMovementPagedResponse searchMovements(Integer itemId, Integer warehouseId, MovementType movementType, Instant from, Instant to, Pageable pageable) {
+        Instant fromAt = from == null ? Instant.EPOCH : from;
+        Instant toAt = to == null ? Instant.parse("9999-12-31T23:59:59Z") : to;
+        Page<StockMovementModel> paged = repo.searchByFilters(fromAt, toAt, itemId, warehouseId, movementType, pageable);
+        List<StockMovementResponse> content = paged.getContent().stream().map(i -> new StockMovementResponse(i.getId(), i.getItemId(), i.getWarehouseId(), i.getMovementType(), i.getQuantityChange(), i.getPreviousQuantity(), i.getCurrentQuantity(), i.getCreatedAt())).toList();
+        return new StockMovementPagedResponse(content, paged.getNumber(), paged.getSize(), paged.getTotalElements(), paged.getTotalPages());
+    }
+
     public StockMovementPagedResponse findByItemId(Integer itemId, Instant from, Instant to, Pageable pageable) {
         Page<StockMovementModel> paged;
         if (from == null && to == null) {

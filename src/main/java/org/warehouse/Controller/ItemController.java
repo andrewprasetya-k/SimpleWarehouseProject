@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.warehouse.Dto.*;
+import org.warehouse.Enum.MovementType;
 import org.warehouse.Kafka.Dto.ItemsMovedKafkaMessage;
 import org.warehouse.Model.DigitalItemModel;
 import org.warehouse.Model.ItemModel;
@@ -64,9 +65,11 @@ public class ItemController {
             @PathVariable int id,
             @RequestParam(required = false) Instant from,
             @RequestParam(required = false) Instant to,
+            @RequestParam(required = false) Integer warehouseId,
+            @RequestParam(required = false) MovementType movementType,
             Pageable pageable
     ) {
-        return stockMovementService.findByItemId(id, from, to, pageable);
+        return stockMovementService.searchMovements(id, warehouseId, movementType, from, to, pageable);
     }
 
     //fetch lgsg dari kafka
